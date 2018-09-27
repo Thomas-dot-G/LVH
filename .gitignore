@@ -1,0 +1,5 @@
+# Maven & Java
+target/
+.settings/
+.classpath
+.project
