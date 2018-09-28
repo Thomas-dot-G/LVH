@@ -1,6 +1,8 @@
 package lvh.naheulbeuk;
 
+import lvh.naheulbeuk.model.LVHError;
 import lvh.naheulbeuk.model.Page;
+import lvh.naheulbeuk.model.Response;
 import lvh.naheulbeuk.model.Story;
 import lvh.naheulbeuk.repository.PageRepository;
 import lvh.naheulbeuk.repository.StoryRepository;
@@ -32,39 +34,35 @@ public class PageApi {
 	@Autowired
 	private StoryRepository storyRepository;
 	
-	@RequestMapping(value="/add", method = RequestMethod.PUT)
-	public ResponseEntity<Page> addPage(@RequestHeader(value="Authorization") String token, @RequestBody Page page) {
+	@Autowired
+	private UserServices userServices;
+	
+	@RequestMapping(value="", method = RequestMethod.PUT)
+	public ResponseEntity<Response> addPage(@RequestHeader(value="Authorization") String token, @RequestBody Page page) {
 		try {
-			checkToken(token);
+			userServices.checkToken(token);
 			checkStory(token, page.getStoryId());
 			checkEntryPoint(page);
 			try {
 				checkPageNumber(page);
 			} catch (Exception e1) {
-				return new ResponseEntity<Page>(HttpStatus.BAD_REQUEST);
+				return new Response(new LVHError(HttpStatus.BAD_REQUEST, "This page number already exists for that story")).toEntity();
 			}
-			return new ResponseEntity<Page>(repository.save(page), HttpStatus.OK);
+			return new Response(repository.save(page)).toEntity();
 		} catch (Exception e) {
-			return new ResponseEntity<Page>(HttpStatus.UNAUTHORIZED);
+			return Response.invalideToken();
 		}
 		
 	}
 	
-	@RequestMapping(value="/get/{id}", method = RequestMethod.GET)
-	public ResponseEntity<Page> getPage(@PathVariable String id) {
-		return new ResponseEntity<Page>(repository.findById(id).orElse(null), HttpStatus.OK);
+	@RequestMapping(value="/{id}", method = RequestMethod.GET)
+	public ResponseEntity<Response> getPage(@PathVariable String id) {
+		return new Response(repository.findById(id).orElse(null)).toEntity();
 	}
 	
-	@RequestMapping(value="/get/story/{id}", method = RequestMethod.GET)
-	public ResponseEntity<Page> getFirstPage(@PathVariable String id) {
-		return new ResponseEntity<Page>(repository.findByStoryIdAndEntryPointTrue(id).orElse(null), HttpStatus.OK);
-	}
-	
-	private void checkToken(final String token) throws Exception {
-		Optional<User> user = userRepository.findByToken(token);
-		if (!user.isPresent()){
-			throw new Exception("Bad Token");
-		}
+	@RequestMapping(value="/story/{id}", method = RequestMethod.GET)
+	public ResponseEntity<Response> getFirstPage(@PathVariable String id) {
+		return new Response(repository.findByStoryIdAndEntryPointTrue(id).orElse(null)).toEntity();
 	}
 	
 	private void checkStory(final String token, final String id) throws Exception {

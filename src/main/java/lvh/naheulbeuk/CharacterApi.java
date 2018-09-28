@@ -1,10 +1,10 @@
 package lvh.naheulbeuk;
 
-import java.util.Optional;
+import java.util.List;
 
 import lvh.naheulbeuk.model.Character;
-import lvh.naheulbeuk.model.Story;
-import lvh.naheulbeuk.model.User;
+import lvh.naheulbeuk.model.LVHError;
+import lvh.naheulbeuk.model.Response;
 import lvh.naheulbeuk.repository.CharacterRepository;
 import lvh.naheulbeuk.repository.UserRepository;
 
@@ -28,52 +28,46 @@ public class CharacterApi {
 	@Autowired
 	private UserRepository userRepository;
 	
-	@RequestMapping(value="/add", method = RequestMethod.PUT)
-	public ResponseEntity<Character> addPerso(@RequestHeader(value="Authorization") String token, @RequestBody Character character) {
+	@Autowired
+	private UserServices userServices;
+	
+	@RequestMapping(value="", method = RequestMethod.PUT)
+	public ResponseEntity<Response> addPerso(@RequestHeader(value="Authorization") String token, @RequestBody Character character) {
 		if (token == null) {
-			return new ResponseEntity<Character>(HttpStatus.UNAUTHORIZED);
+			return Response.invalideToken();
 		} else {
 			try {
-				character.setUserId(getIdFromToken(token));
+				character.setUserId(userServices.getUserId(token));
 			} catch (Exception e) {
-				return new ResponseEntity<Character>(HttpStatus.UNAUTHORIZED);
+				return Response.invalideToken();
 			}
-			return new ResponseEntity<Character>(repository.save(character), HttpStatus.OK);
+			return new Response(repository.save(character)).toEntity();
 		}
 	}
 	
-	@RequestMapping(value="/get/{id}", method = RequestMethod.GET)
-	public ResponseEntity<Character> getPerso(@RequestHeader(value="Authorization") String token, @PathVariable String id) {
+	@RequestMapping(value="/{id}", method = RequestMethod.GET)
+	public ResponseEntity<Response> getPerso(@RequestHeader(value="Authorization") String token, @PathVariable String id) {
 		Character perso = repository.findById(id).orElse(null);
 		if (perso != null) {
 			try {
-				checkToken(token, perso.getUserId());
+				userServices.checkTokenMatchUserId(token, perso.getUserId());
 			} catch (Exception e) {
-				return new ResponseEntity<Character>(HttpStatus.UNAUTHORIZED);
+				return Response.invalideToken();
 			}
 		} else {
-			return new ResponseEntity<Character>(HttpStatus.NOT_FOUND);
+			return new Response(new LVHError(HttpStatus.NOT_FOUND, "Perso not found")).toEntity();
 		}
-		return new ResponseEntity<Character>(perso, HttpStatus.OK);
+		return new Response(perso).toEntity();
 	}
 	
-	private String getIdFromToken(final String token) throws Exception {
-		Optional<User> user = userRepository.findByToken(token);
-		if (user.isPresent()){
-			return user.get().getId();
-		} else {
-			throw new Exception("Bad Token");
+	@RequestMapping(value="", method = RequestMethod.GET)
+	public ResponseEntity<List<Character>> getMyPerso(@RequestHeader(value="Authorization") String token) {
+		try {
+			final String userId = userServices.getUserId(token);
+			return new ResponseEntity<List<Character>>(repository.findByUserId(userId), HttpStatus.OK);
 		}
-	}
-	
-	private void checkToken(final String token, final String userId) throws Exception {
-		Optional<User> user = userRepository.findByToken(token);
-		if (user.isPresent()){
-			if (!user.get().getId().equals(userId)) {
-				throw new Exception("Bad Token");
-			}
-		} else {
-			throw new Exception("Bad Token");
+		catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 	}
 

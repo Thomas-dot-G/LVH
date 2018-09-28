@@ -2,7 +2,8 @@ package lvh.naheulbeuk;
 
 import java.util.Optional;
 
-import lvh.naheulbeuk.model.Page;
+import lvh.naheulbeuk.model.LVHError;
+import lvh.naheulbeuk.model.Response;
 import lvh.naheulbeuk.model.User;
 import lvh.naheulbeuk.repository.UserRepository;
 
@@ -23,32 +24,32 @@ public class UserApi {
 	@Autowired
 	private UserRepository repository;
 	
+	@Autowired
+	private UserServices userServices;
 	
-	@RequestMapping(value="/add", method = RequestMethod.PUT)
-	public ResponseEntity<User> addUser(@RequestBody User user) {
+	
+	@RequestMapping(value="", method = RequestMethod.PUT)
+	public ResponseEntity<Response> addUser(@RequestBody User user) {
 		try {
-			checkToken(user.getToken());
-			return new ResponseEntity<User>(repository.save(user), HttpStatus.OK);
+			userServices.checkTokenAlreadyExists(user.getToken());
+			Optional<User> alreadyExistUser = repository.findByGivenName(user.getGivenName());
+			if (alreadyExistUser.isPresent()){
+				return new Response(new LVHError(HttpStatus.CONFLICT, "GivenName already exist")).toEntity();
+			}
+			return new Response(repository.save(user)).toEntity();
 		} catch (Exception e) {
-			return new ResponseEntity<User>(HttpStatus.UNAUTHORIZED);
+			return new Response(new LVHError(HttpStatus.UNAUTHORIZED, "Token not accepted")).toEntity();
 		}
 	}
 	
-	@RequestMapping(value="/get/{id}", method = RequestMethod.GET)
-	public ResponseEntity<User> getUserById(@PathVariable String id) {
-		return new ResponseEntity<User>(repository.findById(id).orElse(null), HttpStatus.OK);
+	@RequestMapping(value="/{id}", method = RequestMethod.GET)
+	public ResponseEntity<Response> getUserById(@PathVariable String id) {
+		return new Response(repository.findById(id).orElse(null)).toEntity();
 	}
 	
-	@RequestMapping(value="/get", method = RequestMethod.GET)
-	public ResponseEntity<User> getUser(@RequestHeader(value="Authorization") String token) {
-		return new ResponseEntity<User>(repository.findByToken(token).orElse(null), HttpStatus.OK);
-	}
-	
-	private void checkToken(final String token) throws Exception {
-		Optional<User> user = repository.findByToken(token);
-		if (user.isPresent()){
-			throw new Exception("User already exists");
-		}
+	@RequestMapping(value="", method = RequestMethod.GET)
+	public ResponseEntity<Response> getUser(@RequestHeader(value="Authorization") String token) {
+		return new Response(repository.findByToken(token).orElse(null)).toEntity();
 	}
 
 }

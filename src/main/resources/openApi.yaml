@@ -1,0 +1,586 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: LVH - Naheulbeuk
+  license:
+    name: MIT
+servers:
+  - url: https://lvh-naheulbeuk.herokuapp.com/
+paths:
+  /user:
+    get:
+      summary: Get Current user
+      tags:
+        - user
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authentication Token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The current user
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Create a user
+      tags:
+        - user
+      requestBody:
+          description: User object
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: The current user
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /user/{id}:
+    get:
+      summary: Get Current user
+      tags:
+        - user
+      parameters:
+        - name: id
+          in: path
+          description: Id of the searched user
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The current user
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /story:
+    get:
+      summary: Get all current user's stories
+      tags:
+        - story
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authentication Token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of story written by the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Story'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Add a new story
+      tags:
+        - story
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authentication Token
+          required: true
+          schema:
+            type: string
+      requestBody:
+          description: The story object
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+      responses:
+        '200':
+          description: The given story
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StoryResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /story/{userId}:
+    get:
+      summary: Stories of a given user
+      tags:
+        - story
+      parameters:
+        - name: userId
+          in: path
+          description: Id of the searched user
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The given story
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Story'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /perso:
+    get:
+      summary: Get list of user's character
+      tags:
+        - perso
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authentication Token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of characters created by the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Character'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Add a character
+      tags:
+        - perso
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authentication Token
+          required: true
+          schema:
+            type: string
+      requestBody:
+          description: The perso object
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+      responses:
+        '200':
+          description: The given character
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CharacterResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /perso/{id}:
+    get:
+      summary: get a perso
+      tags:
+        - perso
+      parameters:
+        - name: id
+          in: path
+          description: Id of the searched character
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The given character
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CharacterResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /page:
+    put:
+      summary: Add a new page to a story
+      tags:
+        - page
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authentication Token
+          required: true
+          schema:
+            type: string
+      requestBody:
+          description: The page object
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+      responses:
+        '200':
+          description: The given page
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PageResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /page/{id}:
+    get:
+      summary: get a page
+      tags:
+        - page
+      parameters:
+        - name: id
+          in: path
+          description: Id of the searched page
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The searched page
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PageResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /page/story/{id}:
+    get:
+      summary: get the first page of a story
+      tags:
+        - page
+      parameters:
+        - name: id
+          in: path
+          description: Id of the searched sotry
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The searched page
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PageResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /adventure/changePage:
+    post:
+      summary: character goes to another page
+      tags:
+        - adventure
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authentication Token
+          required: true
+          schema:
+            type: string
+      requestBody:
+          description: The choice made by the user
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Choice'
+      responses:
+        '200':
+          description: The searched page
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PageResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /adventure/{persoId}:
+    get:
+      summary: get the page and character with persoId (when reload app)
+      tags:
+        - adventure
+      parameters:
+        - name: persoId
+          in: path
+          description: Id of the searched character
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The searched page and character
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdventureResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    User:
+      required:
+        - token
+        - givenName
+      properties:
+        token:
+          type: string
+        givenName:
+          type: string
+        avatarUri:
+          type: string
+    UserResponse:
+      properties:
+        page:
+          $ref: "#/components/schemas/User"
+    Story:
+      required:
+        - name
+        - rangeLevel
+      properties:
+        userId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        rangeLevel:
+          type: string
+        adminApproved:
+          type: boolean
+        creationDate:
+          type: string
+        lastUpdateDate:
+          type: string
+        approvedDate:
+          type: string
+        likes:
+          type: integer
+        dislikes:
+          type: integer
+        imageUri:
+          type: string
+    StoryResponse:
+      properties:
+        page:
+          $ref: "#/components/schemas/Story"
+    Character:
+      required:
+        - name
+        - race
+        - job
+        - gender
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        race:
+          type: string
+        job:
+          type: string
+        destinyPoint:
+          type: integer
+        level:
+          type: integer
+        xp:
+          type: integer
+        gender:
+          type: string
+        courage:
+          type: integer
+        intelligence:
+          type: integer
+        charisma:
+          type: integer
+        dexterity:
+          type: integer
+        strenght:
+          type: integer
+        vitality:
+          type: integer
+        vilatityMax:
+          type: integer
+        attack:
+          type: integer
+        parry:
+          type: integer
+        protection:
+          type: integer
+        money:
+          type: integer
+        magicProtection:
+          type: integer
+        maxWeight:
+          type: integer
+        pageId:
+          type: string
+        onOfficalMission:
+          type: boolean
+        creationDate:
+          type: string
+        userId:
+          type: string
+        objects:
+          type: array
+          items:
+            type: object
+        fight:
+          type: object
+        companions:
+          type: array
+          items:
+            type: object
+    CharacterResponse:
+      properties:
+        perso:
+          $ref: "#/components/schemas/Character"
+    Page:
+      required:
+        - storyId
+        - pageNumber
+        - text
+        - entryPoint
+      properties:
+        storyId:
+          type: string
+        pageNumber:
+          type: string
+        imageUri:
+          type: string
+        entryPoint:
+          description: Is the current page the first page of the story
+          type: boolean
+        fight:
+          type: object
+        text:
+          type: string
+    Choice:
+      required:
+        - persoId
+        - targetPageNumberId
+        - targetStoryId
+      properties:
+        persoId:
+          type: string
+        targetPageNumberId:
+          type: string
+        targetStoryId:
+          type: string
+        input:
+          description: If the access page requires an input, this is the user response
+          type: string
+    PageResponse:
+      properties:
+        page:
+          $ref: "#/components/schemas/Page"
+    AdventureResponse:
+      properties:
+        page:
+          $ref: "#/components/schemas/Page"
+        perso:
+          $ref: "#/components/schemas/Character"
+    ErrorResponse:
+      properties:
+        error:
+          $ref: "#/components/schemas/Error"
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+

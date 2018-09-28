@@ -16,6 +16,8 @@ public class Story {
 	@Indexed
 	private String userId;
 	
+	private String name;
+	
 	private String description;
 	
 	private String rangeLevel;
@@ -117,6 +119,14 @@ public class Story {
 
 	public void setImageUri(String imageUri) {
 		this.imageUri = imageUri;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

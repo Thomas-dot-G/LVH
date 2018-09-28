@@ -1,10 +1,9 @@
 package lvh.naheulbeuk;
 
 import java.util.List;
-import java.util.Optional;
 
+import lvh.naheulbeuk.model.Response;
 import lvh.naheulbeuk.model.Story;
-import lvh.naheulbeuk.model.User;
 import lvh.naheulbeuk.repository.StoryRepository;
 import lvh.naheulbeuk.repository.UserRepository;
 
@@ -28,33 +27,31 @@ public class StoryApi {
 	@Autowired
 	private UserRepository userRepository;
 	
-	@RequestMapping(value="/add", method = RequestMethod.PUT)
-	public ResponseEntity<Story> addStory(@RequestHeader(value="Authorization") String token, @RequestBody Story story) {
+	@Autowired
+	private UserServices userServices;
+	
+	@RequestMapping(value="", method = RequestMethod.PUT)
+	public ResponseEntity<Response> addStory(@RequestHeader(value="Authorization") String token, @RequestBody Story story) {
 		try {
-			story.setUserId(this.getUserId(token));
-			return new ResponseEntity<Story>(repository.save(story), HttpStatus.OK);
+			story.setUserId(userServices.getUserId(token));
+			return new Response(repository.save(story)).toEntity();
 		} catch (Exception e) {
-			return new ResponseEntity<Story>(HttpStatus.UNAUTHORIZED);
+			return Response.invalideToken();
 		}
 		
 	}
 	
-	@RequestMapping(value="/get/{userId}", method = RequestMethod.GET)
+	@RequestMapping(value="/{userId}", method = RequestMethod.GET)
 	public ResponseEntity<List<Story>> getStories(@PathVariable String userId) {
 		return new ResponseEntity<List<Story>>(repository.findByUserId(userId), HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="/get", method = RequestMethod.GET)
-	public ResponseEntity<Story> getStory(@PathVariable String id) {
-		return new ResponseEntity<Story>(repository.findById(id).orElse(null), HttpStatus.OK);
-	}
-	
-	private String getUserId(final String token) throws Exception {
-		Optional<User> user = userRepository.findByToken(token);
-		if (user.isPresent()){
-			return user.get().getId();
-		} else {
-			throw new Exception("Bad Token");
+	@RequestMapping(value="", method = RequestMethod.GET)
+	public ResponseEntity<List<Story>> getMyStories(@RequestHeader(value="Authorization") String token) {
+		try {
+			return new ResponseEntity<List<Story>>(repository.findByUserId(userServices.getUserId(token)), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 	}
 
