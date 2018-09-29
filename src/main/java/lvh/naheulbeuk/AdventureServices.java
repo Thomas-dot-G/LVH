@@ -5,18 +5,27 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
+
+
 import lvh.naheulbeuk.model.Action;
 import lvh.naheulbeuk.model.Character;
 import lvh.naheulbeuk.model.Choice;
+import lvh.naheulbeuk.model.Condition;
+import lvh.naheulbeuk.model.ConditionApply;
 import lvh.naheulbeuk.model.ConditionType;
 import lvh.naheulbeuk.model.Equipement;
 import lvh.naheulbeuk.model.LocalisationObject;
 import lvh.naheulbeuk.model.Page;
 import lvh.naheulbeuk.model.PageAccess;
+import lvh.naheulbeuk.model.Test;
 import lvh.naheulbeuk.model.User;
 import lvh.naheulbeuk.repository.CharacterRepository;
 import lvh.naheulbeuk.repository.PageRepository;
 import lvh.naheulbeuk.repository.UserRepository;
+
+
+
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,17 +129,42 @@ public class AdventureServices {
 	}
 	
 	public void setPageAccess(final Character perso, final Page page) {
+		try {
+			if (page.getTest() != null){
+				final Test test = page.getTest();
+				test.setDoLessThan((int) PropertyUtils.getSimpleProperty(perso, test.getCaract()), (int) PropertyUtils.getSimpleProperty(perso, test.getBasedModificatorCaract()));
+			}
+		} catch (Exception e) {
+			page.setHasEncounterPb(true);
+			pageRepository.save(page);
+		}
 		page.getPageAccesses().forEach(pageAccess -> {
-			pageAccess.getConditions().forEach(condition -> {
-				if (ConditionType.test.equals(condition.getConditionType())){
-					try {
-						condition.setDoLessThan((int) PropertyUtils.getSimpleProperty(perso, condition.getCaract()), (int) PropertyUtils.getSimpleProperty(perso, condition.getBasedModificatorCaract()));
-					} catch (Exception e) {
-						page.setHasEncounterPb(true);
-						pageRepository.save(page);
+			boolean isPageAccessible = true;
+			for(Condition condition: pageAccess.getConditions()) {
+				try {
+					if (ConditionType.CARACT.equals(condition.getConditionType())){
+						final int caract = (int) PropertyUtils.getSimpleProperty(perso, condition.getCaract());
+						final Integer givenPoint = condition.getPoints();
+						if (givenPoint != null) {
+							switch (condition.getCaractCondition()) {
+								case LESS_THAN: if (caract >= givenPoint) condition.setUnAccessible(true); break;
+								case LESS_OR_EQUALS_THAN: if (caract > givenPoint) condition.setUnAccessible(true); break;
+								case MORE_THAN: if (caract <= givenPoint) condition.setUnAccessible(true); break;
+								case MORE_OR_EQUALS_THAN: if (caract < givenPoint) condition.setUnAccessible(true); break;
+								case EQUALS: if (caract != givenPoint) condition.setUnAccessible(true); break;
+								default: break;
+							}
+						}
 					}
+					if (condition.isUnAccessible() && condition.getConditionApply() == null) isPageAccessible = false;
+					if (condition.isUnAccessible() && ConditionApply.AND.equals(condition.getConditionApply())) isPageAccessible = false;
+					if (!condition.isUnAccessible() && ConditionApply.OR.equals(condition.getConditionApply())) isPageAccessible = true;
+				} catch (Exception e) {
+					page.setHasEncounterPb(true);
+					pageRepository.save(page);
 				}
-			});
+			};
+			pageAccess.setUnAccessible(!isPageAccessible);
 		});
 	}
 

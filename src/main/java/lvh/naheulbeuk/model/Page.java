@@ -32,6 +32,8 @@ public class Page {
 	
 	private Fight fight;
 	
+	private Test test;
+	
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private boolean hasEncounterPb;
 	
@@ -120,6 +122,14 @@ public class Page {
 		this.fight = fight;
 	}
 	
+	public Test getTest() {
+		return test;
+	}
+
+	public void setTest(Test test) {
+		this.test = test;
+	}
+
 	public PageAccess getPageAccess(final String pageNumber) {
 		if (pageNumber == null) return null;
 		for (PageAccess pageaccess: this.getPageAccesses()) {

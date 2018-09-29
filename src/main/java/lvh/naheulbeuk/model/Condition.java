@@ -1,30 +1,27 @@
 package lvh.naheulbeuk.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @JsonInclude(Include.NON_NULL)
-
 public class Condition {
+	
+	private ConditionApply conditionApply; //AND OR for list of conditions
 	
 	private ConditionType conditionType;
 	
 	private String caract;
 	
-	private Integer plainModificator;
+	private ConditionApply caractCondition; // If conditionType = CARACT
 	
-	private Integer caractBasedModificator;
+	private Integer points;
 	
-	private String basedModificatorCaract;
+	@JsonProperty(access = Access.READ_ONLY)
+	private boolean isUnAccessible;
 	
-	private Integer fromDefinedPoint;
-	
-	private Boolean ignoreLowerPoints; // if basedModificatorCaract point are lower than fromDefinedPoint ignore caractBasedModificator ? (false for the other way around, null for ignore nothing)
-	
-	private Integer doLessThan;
-	
-	//Example: épreuve de FORCE: pour chaque point de PR au dessus de 3, vous aurez un malus de 2
-	// caract: Strength, plainModificator: 0, caractBasedModificator: -2, caractBaseModificator: protection, fromDefinedPoint: 3
+	private Boolean testPassed; // true, test passed, false, test failed, null no test required
 	
 	private Object object;
 	
@@ -46,44 +43,12 @@ public class Condition {
 		this.caract = caract;
 	}
 
-	public Integer getPlainModificator() {
-		return plainModificator;
+	public Integer getPoints() {
+		return points;
 	}
 
-	public void setPlainModificator(Integer plainModificator) {
-		this.plainModificator = plainModificator;
-	}
-
-	public Integer getCaractBasedModificator() {
-		return caractBasedModificator;
-	}
-
-	public void setCaractBasedModificator(Integer caractBasedModificator) {
-		this.caractBasedModificator = caractBasedModificator;
-	}
-
-	public String getBasedModificatorCaract() {
-		return basedModificatorCaract;
-	}
-
-	public void setBasedModificatorCaract(String basedModificatorCaract) {
-		this.basedModificatorCaract = basedModificatorCaract;
-	}
-
-	public Integer getFromDefinedPoint() {
-		return fromDefinedPoint;
-	}
-
-	public void setFromDefinedPoint(Integer fromDefinedPoint) {
-		this.fromDefinedPoint = fromDefinedPoint;
-	}
-
-	public Boolean getIgnoreLowerPoints() {
-		return ignoreLowerPoints;
-	}
-
-	public void setIgnoreLowerPoints(Boolean ignoreLowerPoints) {
-		this.ignoreLowerPoints = ignoreLowerPoints;
+	public void setPoints(Integer points) {
+		this.points = points;
 	}
 
 	public Object getObject() {
@@ -102,16 +67,36 @@ public class Condition {
 		this.mustNotHaveObject = mustNotHaveObject;
 	}
 
-	public void setDoLessThan(int caract, int basedModificatorCaract) {
-		int baseModificator = (basedModificatorCaract - (fromDefinedPoint != null ? fromDefinedPoint : 0));
-		if (ignoreLowerPoints != null && ignoreLowerPoints == true && baseModificator < 0) baseModificator = 0;
-		if (ignoreLowerPoints != null && ignoreLowerPoints == false && baseModificator > 0) baseModificator = 0;
-
-		this.doLessThan = caract + plainModificator + (baseModificator * caractBasedModificator);
+	public ConditionApply getConditionApply() {
+		return conditionApply;
 	}
-	
-	public Integer getDoLessThan() {
-		return doLessThan;
+
+	public void setConditionApply(ConditionApply conditionApply) {
+		this.conditionApply = conditionApply;
+	}
+
+	public ConditionApply getCaractCondition() {
+		return caractCondition;
+	}
+
+	public void setCaractCondition(ConditionApply caractCondition) {
+		this.caractCondition = caractCondition;
+	}
+
+	public boolean isUnAccessible() {
+		return isUnAccessible;
+	}
+
+	public void setUnAccessible(boolean isUnAccessible) {
+		this.isUnAccessible = isUnAccessible;
+	}
+
+	public Boolean getTestPassed() {
+		return testPassed;
+	}
+
+	public void setTestPassed(Boolean testPassed) {
+		this.testPassed = testPassed;
 	}
 		
 }

@@ -8,6 +8,7 @@ This app is the api of the project. The goal is just to have fun without other m
 - Adding clients secrets
 - Setting an authentication mode (Ex via Keycloak) or an identity provider
 - Changing the structure to DDD
+- Add Unit and BDD tests
 
 
 ## Features

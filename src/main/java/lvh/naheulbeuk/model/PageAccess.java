@@ -22,6 +22,9 @@ public class PageAccess {
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private String correctInput;
 
+	@JsonProperty(access = Access.READ_ONLY)
+	private boolean isUnAccessible;
+	
 	public List<Condition> getConditions() {
 		return conditions;
 	}
@@ -60,5 +63,13 @@ public class PageAccess {
 
 	public void setTargetPageNumer(String targetPageNumer) {
 		this.targetPageNumer = targetPageNumer;
+	}
+
+	public boolean isUnAccessible() {
+		return isUnAccessible;
+	}
+
+	public void setUnAccessible(boolean isUnAccessible) {
+		this.isUnAccessible = isUnAccessible;
 	}
 }
