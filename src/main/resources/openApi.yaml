@@ -544,6 +544,14 @@ components:
           type: object
         text:
           type: string
+        actions:
+          type: array
+          items:
+            type: object
+        pageAccess:
+          type: array
+          items:
+            type: object
     Choice:
       required:
         - persoId

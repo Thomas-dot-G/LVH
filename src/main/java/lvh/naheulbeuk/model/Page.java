@@ -20,15 +20,20 @@ public class Page {
 	@Indexed
 	private String storyId;
 	
+	@Indexed
 	private String pageNumber;
 	
 	private String text;
 	
 	private String imageUri;
 	
+	@Indexed
 	private boolean entryPoint;
 	
 	private Fight fight;
+	
+	@JsonProperty(access = Access.WRITE_ONLY)
+	private boolean hasEncounterPb;
 	
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private List<Action> actions = new ArrayList<Action>();
@@ -113,6 +118,22 @@ public class Page {
 
 	public void setFight(Fight fight) {
 		this.fight = fight;
+	}
+	
+	public PageAccess getPageAccess(final String pageNumber) {
+		if (pageNumber == null) return null;
+		for (PageAccess pageaccess: this.getPageAccesses()) {
+			if (pageNumber.equals(pageaccess.getTargetPageNumer())) return pageaccess;
+		}
+		return null;
+	}
+
+	public boolean isHasEncounterPb() {
+		return hasEncounterPb;
+	}
+
+	public void setHasEncounterPb(boolean hasEncounterPb) {
+		this.hasEncounterPb = hasEncounterPb;
 	}
 
 }

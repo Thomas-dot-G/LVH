@@ -50,6 +50,7 @@ public class AdventureApi {
 					return new Response(new LVHError(HttpStatus.FORBIDDEN, "Access unknown or forbidden")).toEntity();
 				} else {
 					services.checkActions(currentPage, newPage, choice, perso);
+					services.setPageAccess(perso, newPage);
 					return new Response(perso, newPage).toEntity();
 				}
 			} else {
@@ -70,6 +71,7 @@ public class AdventureApi {
 				Page currentPage = null;
 				if (perso.getPageId() != null) {
 					currentPage = pageRepository.findById(perso.getPageId()).orElse(null);
+					services.setPageAccess(perso, currentPage);
 					response.setPage(currentPage);
 				}
 				return response.toEntity();

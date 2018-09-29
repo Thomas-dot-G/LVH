@@ -9,10 +9,8 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @JsonInclude(Include.NON_NULL)
 public class PageAccess {
-		
-	private boolean condition;
-	
-	private String conditionType;
+
+	private List<Condition> conditions;
 	
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private List<Action> actions;
@@ -24,21 +22,12 @@ public class PageAccess {
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private String correctInput;
 
-
-	public boolean isCondition() {
-		return condition;
+	public List<Condition> getConditions() {
+		return conditions;
 	}
 
-	public void setCondition(boolean condition) {
-		this.condition = condition;
-	}
-
-	public String getConditionType() {
-		return conditionType;
-	}
-
-	public void setConditionType(String conditionType) {
-		this.conditionType = conditionType;
+	public void setConditions(List<Condition> conditions) {
+		this.conditions = conditions;
 	}
 
 	public List<Action> getActions() {
@@ -71,5 +60,5 @@ public class PageAccess {
 
 	public void setTargetPageNumer(String targetPageNumer) {
 		this.targetPageNumer = targetPageNumer;
-	}	
+	}
 }

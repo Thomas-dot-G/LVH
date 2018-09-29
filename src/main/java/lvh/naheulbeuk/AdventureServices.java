@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import lvh.naheulbeuk.model.Action;
 import lvh.naheulbeuk.model.Character;
 import lvh.naheulbeuk.model.Choice;
+import lvh.naheulbeuk.model.ConditionType;
 import lvh.naheulbeuk.model.Equipement;
 import lvh.naheulbeuk.model.LocalisationObject;
 import lvh.naheulbeuk.model.Page;
@@ -51,6 +52,10 @@ public class AdventureServices {
 	public Page checkPageAccess(final Page currentPage, final Choice choice) throws Exception {
 		if (currentPage == null) {
 			return pageRepository.findByStoryIdAndEntryPointTrue(choice.getTargetStoryId()).orElse(null);
+		}
+		final PageAccess pageAccess= currentPage.getPageAccess(choice.getTargetPageNumberId());
+		if (pageAccess == null || (pageAccess.getCorrectInput() != null && !pageAccess.getCorrectInput().equals(choice.getInput()))) {
+			return null;
 		}
 		return pageRepository.findByStoryIdAndPageNumber(currentPage.getStoryId(), choice.getTargetPageNumberId()).orElse(null);
 	}
@@ -112,6 +117,21 @@ public class AdventureServices {
 	
 	private void removeAllObjectsByLocalisation(final Character perso, final LocalisationObject localisation) {
 			perso.getObjects().removeIf(obj -> localisation.equals(obj.getLocalisation()));
+	}
+	
+	public void setPageAccess(final Character perso, final Page page) {
+		page.getPageAccesses().forEach(pageAccess -> {
+			pageAccess.getConditions().forEach(condition -> {
+				if (ConditionType.test.equals(condition.getConditionType())){
+					try {
+						condition.setDoLessThan((int) PropertyUtils.getSimpleProperty(perso, condition.getCaract()), (int) PropertyUtils.getSimpleProperty(perso, condition.getBasedModificatorCaract()));
+					} catch (Exception e) {
+						page.setHasEncounterPb(true);
+						pageRepository.save(page);
+					}
+				}
+			});
+		});
 	}
 
 }
