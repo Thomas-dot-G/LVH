@@ -19,6 +19,9 @@ public class Response {
 	
 	private LVHError error;
 	
+	public Response() {
+	}
+	
 	public Response(User user) {
 		this.user = user;
 	}

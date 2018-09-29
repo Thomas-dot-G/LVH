@@ -55,6 +55,25 @@ public class PageApi {
 		
 	}
 	
+	@RequestMapping(value="/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Response> deletePage(@RequestHeader(value="Authorization") String token, @PathVariable String id) {
+		try {
+			userServices.checkToken(token);
+			Page page = repository.findById(id).orElse(null);
+			if (page != null) {
+				if(checkStory(token, page.getStoryId()).isAdminApproved()) {
+					return new Response(new LVHError(HttpStatus.FORBIDDEN, "This story is approved and cannot be changed")).toEntity();
+				} else {
+				repository.delete(page);
+				}
+			}
+			return new ResponseEntity<Response>(HttpStatus.NO_CONTENT);
+		} catch (Exception e) {
+			return Response.invalideToken();
+		}
+		
+	}
+	
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Response> getPage(@PathVariable String id) {
 		return new Response(repository.findById(id).orElse(null)).toEntity();
@@ -65,7 +84,7 @@ public class PageApi {
 		return new Response(repository.findByStoryIdAndEntryPointTrue(id).orElse(null)).toEntity();
 	}
 	
-	private void checkStory(final String token, final String id) throws Exception {
+	private Story checkStory(final String token, final String id) throws Exception {
 		Optional<Story> story = storyRepository.findById(id);
 		Optional<User> user = userRepository.findByToken(token);
 		if (!story.isPresent()){
@@ -75,6 +94,7 @@ public class PageApi {
 		} else if (!user.get().getId().equals(story.get().getUserId())) {
 			throw new Exception("Not Authorized");
 		}
+		return story.orElse(null);
 	}
 	
 	private void checkEntryPoint(Page page) {

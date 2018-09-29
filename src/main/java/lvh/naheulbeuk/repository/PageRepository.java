@@ -15,4 +15,5 @@ public interface PageRepository extends MongoRepository<Page, String> {
 	
 	public Optional<Page> findByStoryIdAndPageNumber(final String id, final String pageNumber);
 
+	public void deleteByStoryId(final String id);
 }

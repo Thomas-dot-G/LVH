@@ -23,7 +23,7 @@ public class PageAccess {
 	private String correctInput;
 
 	@JsonProperty(access = Access.READ_ONLY)
-	private boolean isUnAccessible;
+	private boolean unAccessible;
 	
 	public List<Condition> getConditions() {
 		return conditions;
@@ -66,10 +66,10 @@ public class PageAccess {
 	}
 
 	public boolean isUnAccessible() {
-		return isUnAccessible;
+		return unAccessible;
 	}
 
-	public void setUnAccessible(boolean isUnAccessible) {
-		this.isUnAccessible = isUnAccessible;
+	public void setUnAccessible(boolean unAccessible) {
+		this.unAccessible = unAccessible;
 	}
 }

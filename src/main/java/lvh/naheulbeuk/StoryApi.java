@@ -2,8 +2,11 @@ package lvh.naheulbeuk;
 
 import java.util.List;
 
+import lvh.naheulbeuk.model.LVHError;
+import lvh.naheulbeuk.model.Page;
 import lvh.naheulbeuk.model.Response;
 import lvh.naheulbeuk.model.Story;
+import lvh.naheulbeuk.repository.PageRepository;
 import lvh.naheulbeuk.repository.StoryRepository;
 import lvh.naheulbeuk.repository.UserRepository;
 
@@ -30,6 +33,9 @@ public class StoryApi {
 	@Autowired
 	private UserServices userServices;
 	
+	@Autowired
+	private PageRepository pageRepository;
+	
 	@RequestMapping(value="", method = RequestMethod.PUT)
 	public ResponseEntity<Response> addStory(@RequestHeader(value="Authorization") String token, @RequestBody Story story) {
 		try {
@@ -53,6 +59,29 @@ public class StoryApi {
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
+	}
+	
+	@RequestMapping(value="/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Response> deleteStory(@RequestHeader(value="Authorization") String token, @PathVariable String id) {
+		try {
+			userServices.checkToken(token);
+			Story story = repository.findById(id).orElse(null);
+			if (story != null) {
+				if (!userServices.getUserId(token).equals(story.getUserId())) {
+					return new Response(new LVHError(HttpStatus.FORBIDDEN, "You are not allowed to do that")).toEntity();
+				}
+				if (story.isAdminApproved()) {
+					return new Response(new LVHError(HttpStatus.FORBIDDEN, "This story is approved and cannot be deleted")).toEntity();
+
+				}
+				pageRepository.deleteByStoryId(story.getId());
+				repository.delete(story);
+			}
+			return new ResponseEntity<Response>(HttpStatus.NO_CONTENT);
+		} catch (Exception e) {
+			return Response.invalideToken();
+		}
+		
 	}
 
 }
