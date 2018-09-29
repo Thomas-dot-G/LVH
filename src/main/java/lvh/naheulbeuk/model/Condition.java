@@ -18,6 +18,10 @@ public class Condition {
 	
 	private Integer points;
 	
+	private String stringCaract;
+	
+	private String stringCaractValue;
+	
 	@JsonProperty(access = Access.READ_ONLY)
 	private boolean isUnAccessible;
 	
@@ -27,7 +31,7 @@ public class Condition {
 	
 	private Object object;
 	
-	private Boolean mustNotHaveObject;
+	private Boolean inverseCondition;
 
 	public ConditionType getConditionType() {
 		return conditionType;
@@ -61,12 +65,12 @@ public class Condition {
 		this.object = object;
 	}
 
-	public Boolean getMustNotHaveObject() {
-		return mustNotHaveObject;
+	public Boolean getInverseCondition() {
+		return inverseCondition;
 	}
 
-	public void setMustNotHaveObject(Boolean mustNotHaveObject) {
-		this.mustNotHaveObject = mustNotHaveObject;
+	public void setInverseCondition(Boolean inverseCondition) {
+		this.inverseCondition = inverseCondition;
 	}
 
 	public ConditionApply getConditionApply() {
@@ -107,6 +111,22 @@ public class Condition {
 
 	public void setTestName(String testName) {
 		this.testName = testName;
+	}
+
+	public String getStringCaract() {
+		return stringCaract;
+	}
+
+	public void setStringCaract(String stringCaract) {
+		this.stringCaract = stringCaract;
+	}
+
+	public String getStringCaractValue() {
+		return stringCaractValue;
+	}
+
+	public void setStringCaractValue(String stringCaractValue) {
+		this.stringCaractValue = stringCaractValue;
 	}
 		
 }

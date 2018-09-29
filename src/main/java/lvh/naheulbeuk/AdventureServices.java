@@ -144,16 +144,26 @@ public class AdventureServices {
 			for(Condition condition: pageAccess.getConditions()) {
 				try {
 					if (ConditionType.CARACT.equals(condition.getConditionType())){
-						final int caract = (int) PropertyUtils.getSimpleProperty(perso, condition.getCaract());
-						final Integer givenPoint = condition.getPoints();
-						if (givenPoint != null) {
-							switch (condition.getCaractCondition()) {
-								case LESS_THAN: if (caract >= givenPoint) condition.setUnAccessible(true); break;
-								case LESS_OR_EQUALS_THAN: if (caract > givenPoint) condition.setUnAccessible(true); break;
-								case MORE_THAN: if (caract <= givenPoint) condition.setUnAccessible(true); break;
-								case MORE_OR_EQUALS_THAN: if (caract < givenPoint) condition.setUnAccessible(true); break;
-								case EQUALS: if (caract != givenPoint) condition.setUnAccessible(true); break;
-								default: break;
+						if (condition.getCaract() != null) {
+							final int caract = (int) PropertyUtils.getSimpleProperty(perso, condition.getCaract());
+							final Integer givenPoint = condition.getPoints();
+							if (givenPoint != null) {
+								switch (condition.getCaractCondition()) {
+									case LESS_THAN: if (caract >= givenPoint) condition.setUnAccessible(true); break;
+									case LESS_OR_EQUALS_THAN: if (caract > givenPoint) condition.setUnAccessible(true); break;
+									case MORE_THAN: if (caract <= givenPoint) condition.setUnAccessible(true); break;
+									case MORE_OR_EQUALS_THAN: if (caract < givenPoint) condition.setUnAccessible(true); break;
+									case EQUALS: if (caract != givenPoint) condition.setUnAccessible(true); break;
+									default: break;
+								}
+							}
+						} else if (condition.getStringCaract() != null) {
+							if (condition.getStringCaract().equals((String) PropertyUtils.getSimpleProperty(perso, condition.getStringCaract()))){
+								condition.setUnAccessible(condition.getInverseCondition() != null ? condition.getInverseCondition() : false);
+							}
+						} else if (condition.getObject() != null) {
+							if (perso.hasObject(condition.getObject())){
+								condition.setUnAccessible(condition.getInverseCondition() != null ? condition.getInverseCondition() : false);
 							}
 						}
 					}

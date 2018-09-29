@@ -32,7 +32,7 @@ public class Page {
 	
 	private Fight fight;
 	
-	private List<Test> test;
+	private List<Test> tests;
 	
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private boolean hasEncounterPb;
@@ -123,11 +123,11 @@ public class Page {
 	}
 
 	public List<Test> getTest() {
-		return test;
+		return tests;
 	}
 
 	public void setTest(List<Test> test) {
-		this.test = test;
+		this.tests = test;
 	}
 
 	public PageAccess getPageAccess(final String pageNumber) {
