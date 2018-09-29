@@ -23,6 +23,8 @@ public class Condition {
 	
 	private Boolean testPassed; // true, test passed, false, test failed, null no test required
 	
+	private String testName;
+	
 	private Object object;
 	
 	private Boolean mustNotHaveObject;
@@ -97,6 +99,14 @@ public class Condition {
 
 	public void setTestPassed(Boolean testPassed) {
 		this.testPassed = testPassed;
+	}
+
+	public String getTestName() {
+		return testName;
+	}
+
+	public void setTestName(String testName) {
+		this.testName = testName;
 	}
 		
 }

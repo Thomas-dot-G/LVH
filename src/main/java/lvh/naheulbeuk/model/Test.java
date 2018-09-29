@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 @JsonInclude(Include.NON_NULL)
 public class Test {
 	
+	private String name;
+	
 	private String caract;
 	
 	private Integer plainModificator; // If conditionType = TEST
@@ -73,6 +75,14 @@ public class Test {
 
 	public void setCaract(String caract) {
 		this.caract = caract;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setDoLessThan(Integer doLessThan) {

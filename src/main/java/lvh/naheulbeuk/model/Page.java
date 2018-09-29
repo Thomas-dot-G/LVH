@@ -32,7 +32,7 @@ public class Page {
 	
 	private Fight fight;
 	
-	private Test test;
+	private List<Test> test;
 	
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private boolean hasEncounterPb;
@@ -121,12 +121,12 @@ public class Page {
 	public void setFight(Fight fight) {
 		this.fight = fight;
 	}
-	
-	public Test getTest() {
+
+	public List<Test> getTest() {
 		return test;
 	}
 
-	public void setTest(Test test) {
+	public void setTest(List<Test> test) {
 		this.test = test;
 	}
 

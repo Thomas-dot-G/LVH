@@ -3,7 +3,6 @@ package lvh.naheulbeuk;
 import java.util.List;
 
 import lvh.naheulbeuk.model.LVHError;
-import lvh.naheulbeuk.model.Page;
 import lvh.naheulbeuk.model.Response;
 import lvh.naheulbeuk.model.Story;
 import lvh.naheulbeuk.repository.PageRepository;
@@ -50,6 +49,11 @@ public class StoryApi {
 	@RequestMapping(value="/{userId}", method = RequestMethod.GET)
 	public ResponseEntity<List<Story>> getStories(@PathVariable String userId) {
 		return new ResponseEntity<List<Story>>(repository.findByUserId(userId), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/all", method = RequestMethod.GET)
+	public ResponseEntity<List<Story>> getAllStories() {
+		return new ResponseEntity<List<Story>>(repository.findAll(), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="", method = RequestMethod.GET)

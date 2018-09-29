@@ -131,8 +131,9 @@ public class AdventureServices {
 	public void setPageAccess(final Character perso, final Page page) {
 		try {
 			if (page.getTest() != null){
-				final Test test = page.getTest();
-				test.setDoLessThan((int) PropertyUtils.getSimpleProperty(perso, test.getCaract()), (int) PropertyUtils.getSimpleProperty(perso, test.getBasedModificatorCaract()));
+				for (Test test: page.getTest()) {
+					test.setDoLessThan((int) PropertyUtils.getSimpleProperty(perso, test.getCaract()), (int) PropertyUtils.getSimpleProperty(perso, test.getBasedModificatorCaract()));
+				}
 			}
 		} catch (Exception e) {
 			page.setHasEncounterPb(true);
