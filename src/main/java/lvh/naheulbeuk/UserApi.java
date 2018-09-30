@@ -2,9 +2,9 @@ package lvh.naheulbeuk;
 
 import java.util.Optional;
 
-import lvh.naheulbeuk.model.LVHError;
-import lvh.naheulbeuk.model.Response;
 import lvh.naheulbeuk.model.User;
+import lvh.naheulbeuk.model.output.LVHError;
+import lvh.naheulbeuk.model.output.Response;
 import lvh.naheulbeuk.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;

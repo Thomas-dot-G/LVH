@@ -1,5 +1,8 @@
 package lvh.naheulbeuk.model;
 
+import lvh.naheulbeuk.model.list.ConditionApply;
+import lvh.naheulbeuk.model.list.ConditionType;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -26,6 +29,10 @@ public class Condition {
 	private boolean isUnAccessible;
 	
 	private Boolean testPassed; // true, test passed, false, test failed, null no test required
+	
+	private Boolean combatPassed; // true, combat passed, false, combat failed, null no combat required
+	
+	private Boolean combatAvoided;
 	
 	private String testName;
 	
@@ -127,6 +134,22 @@ public class Condition {
 
 	public void setStringCaractValue(String stringCaractValue) {
 		this.stringCaractValue = stringCaractValue;
+	}
+
+	public Boolean getCombatPassed() {
+		return combatPassed;
+	}
+
+	public void setCombatPassed(Boolean combatPassed) {
+		this.combatPassed = combatPassed;
+	}
+
+	public Boolean getCombatAvoided() {
+		return combatAvoided;
+	}
+
+	public void setCombatAvoided(Boolean combatAvoided) {
+		this.combatAvoided = combatAvoided;
 	}
 		
 }

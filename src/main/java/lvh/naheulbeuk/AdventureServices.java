@@ -1,5 +1,6 @@
 package lvh.naheulbeuk;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -8,21 +9,31 @@ import java.util.stream.Collectors;
 
 
 
+
+
+
+
+
 import lvh.naheulbeuk.model.Action;
 import lvh.naheulbeuk.model.Character;
-import lvh.naheulbeuk.model.Choice;
 import lvh.naheulbeuk.model.Condition;
-import lvh.naheulbeuk.model.ConditionApply;
-import lvh.naheulbeuk.model.ConditionType;
 import lvh.naheulbeuk.model.Equipement;
-import lvh.naheulbeuk.model.LocalisationObject;
 import lvh.naheulbeuk.model.Page;
 import lvh.naheulbeuk.model.PageAccess;
 import lvh.naheulbeuk.model.Test;
 import lvh.naheulbeuk.model.User;
+import lvh.naheulbeuk.model.input.Choice;
+import lvh.naheulbeuk.model.list.ConditionApply;
+import lvh.naheulbeuk.model.list.ConditionType;
+import lvh.naheulbeuk.model.list.LocalisationObject;
 import lvh.naheulbeuk.repository.CharacterRepository;
 import lvh.naheulbeuk.repository.PageRepository;
 import lvh.naheulbeuk.repository.UserRepository;
+
+
+
+
+
 
 
 
@@ -72,25 +83,20 @@ public class AdventureServices {
 	public Character checkActions(final Page currentPage, final Page newPage, final Choice choice, final Character perso) throws Exception {
 		if(currentPage != null) {
 			PageAccess pageAccess = currentPage.getPageAccesses().stream().filter(access -> choice.getTargetPageNumberId().equals(access.getTargetPageNumer())).findFirst().orElse(null);
-			for(Action action : pageAccess.getActions()) {
-				int quantity;
-				switch (action.getActionType()) {
-					case addCarac: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) + action.getQuantity(); PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity < 20 ? quantity : 19); break;
-					case removeCarac: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) - action.getQuantity(); PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity > 0 ? quantity : 1); break;
-					case addObject: perso.getObjects().add(action.getObject()); break;
-					case removeObject: removeObject(perso, action.getObject()); break;
-					case removeAllCarriedObject: removeAllObjectsByLocalisation(perso, LocalisationObject.body); break;
-					case removeBag: removeAllObjectsByLocalisation(perso, LocalisationObject.bag); break;
-					case end: perso.setCompanions(new ArrayList<Character>()); perso.setPageId(null); break;
-					default: break;
-				}
-			}
+			executeActions(perso, pageAccess.getActions(), false);
 		}
-		for(Action action : newPage.getActions()) {
+		executeActions(perso, newPage.getActions(), false);
+		perso.setPageId(newPage.getId());
+		return characterRepository.save(perso);
+		
+	}
+	
+	public void executeActions(final Character perso, final List<Action> actions, final boolean savePerso) throws Exception {
+		for(Action action : actions) {
 			int quantity;
 			switch (action.getActionType()) {
-				case addCarac: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) + action.getQuantity(); PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity < 20 ? quantity : 19); break;
-				case removeCarac: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) - action.getQuantity(); PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity > 0 ? quantity : 1); break;
+				case addCaract: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) + action.getQuantity(); PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity < 20 ? quantity : 19); break;
+				case removeCaract: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) - action.getQuantity(); PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity > 0 ? quantity : 1); break;
 				case addObject: perso.getObjects().add(action.getObject()); break;
 				case removeObject: removeObject(perso, action.getObject()); break;
 				case removeAllCarriedObject: removeAllObjectsByLocalisation(perso, LocalisationObject.body); break;
@@ -99,9 +105,9 @@ public class AdventureServices {
 				default: break;
 			}
 		}
-		perso.setPageId(newPage.getId());
-		return characterRepository.save(perso);
-		
+		if (savePerso) {
+			characterRepository.save(perso);
+		}
 	}
 	
 	private void removeObject(final Character perso, final lvh.naheulbeuk.model.Object object) {

@@ -1,4 +1,4 @@
-package lvh.naheulbeuk.model;
+package lvh.naheulbeuk.model.output;
 
 import org.springframework.http.HttpStatus;
 

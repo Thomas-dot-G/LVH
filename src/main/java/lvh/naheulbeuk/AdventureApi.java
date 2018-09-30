@@ -1,10 +1,12 @@
 package lvh.naheulbeuk;
 
 import lvh.naheulbeuk.model.Character;
-import lvh.naheulbeuk.model.Choice;
-import lvh.naheulbeuk.model.LVHError;
 import lvh.naheulbeuk.model.Page;
-import lvh.naheulbeuk.model.Response;
+import lvh.naheulbeuk.model.Test;
+import lvh.naheulbeuk.model.input.Choice;
+import lvh.naheulbeuk.model.input.TestInput;
+import lvh.naheulbeuk.model.output.LVHError;
+import lvh.naheulbeuk.model.output.Response;
 import lvh.naheulbeuk.repository.CharacterRepository;
 import lvh.naheulbeuk.repository.PageRepository;
 import lvh.naheulbeuk.repository.UserRepository;
@@ -52,6 +54,32 @@ public class AdventureApi {
 					services.checkActions(currentPage, newPage, choice, perso);
 					services.setPageAccess(perso, newPage);
 					return new Response(perso, newPage).toEntity();
+				}
+			} else {
+				return new Response(new LVHError(HttpStatus.NOT_FOUND, "Perso not found")).toEntity();
+			}
+		} catch (Exception e) {
+			return new Response(new LVHError(HttpStatus.UNAUTHORIZED, "Access not allowed")).toEntity();
+		}
+	}
+	
+	@RequestMapping(value="/test", method = RequestMethod.POST)
+	public ResponseEntity<Response> takeTest(@RequestHeader(value="Authorization") String token, @RequestBody TestInput testInput) {
+		try {
+			Character perso = characterRepository.findById(testInput.getPersoId()).orElse(null);
+			if (perso != null) {
+				services.checkToken(token, perso.getUserId());
+				Page currentPage = null;
+				if (perso.getPageId() != null) {
+					currentPage = pageRepository.findById(perso.getPageId()).orElse(null);
+					Test test = currentPage.getTest(testInput.getTestName());
+					if (test != null) {
+						services.executeActions(perso, test.getActions(), true);
+						services.setPageAccess(perso, currentPage);
+					}
+					return new Response(perso, currentPage).toEntity();
+				} else {
+					return new Response(new LVHError(HttpStatus.FORBIDDEN, "Access unknown or forbidden (no Page found)")).toEntity();
 				}
 			} else {
 				return new Response(new LVHError(HttpStatus.NOT_FOUND, "Perso not found")).toEntity();

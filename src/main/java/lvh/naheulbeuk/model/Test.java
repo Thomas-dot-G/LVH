@@ -1,5 +1,7 @@
 package lvh.naheulbeuk.model;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -23,11 +25,13 @@ public class Test {
 	private Boolean ignoreLowerPoints; // true if basedModificatorCaract point are lower than fromDefinedPoint ignore caractBasedModificator ? (false for the other way around, null for ignore nothing)
 	
 	//Example: épreuve de FORCE: pour chaque point de PR au dessus de 3, vous aurez un malus de 2
-		// caract: Strength, plainModificator: 0, caractBasedModificator: -2, caractBaseModificator: protection, fromDefinedPoint: 3
-	
+	// caract: Strength, plainModificator: 0, caractBasedModificator: -2, caractBaseModificator: protection, fromDefinedPoint: 3
+		
 	@JsonProperty(access = Access.READ_ONLY)
 	private Integer doLessThan;
 	
+	private List<Action> actions;
+
 	
 	public Integer getPlainModificator() {
 		return plainModificator;
@@ -87,6 +91,14 @@ public class Test {
 
 	public void setDoLessThan(Integer doLessThan) {
 		this.doLessThan = doLessThan;
+	}
+
+	public List<Action> getActions() {
+		return actions;
+	}
+
+	public void setActions(List<Action> actions) {
+		this.actions = actions;
 	}
 
 	public void setDoLessThan(int caract, int basedModificatorCaract) {

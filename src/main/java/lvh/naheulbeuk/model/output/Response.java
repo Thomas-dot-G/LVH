@@ -1,4 +1,9 @@
-package lvh.naheulbeuk.model;
+package lvh.naheulbeuk.model.output;
+
+import lvh.naheulbeuk.model.Character;
+import lvh.naheulbeuk.model.Page;
+import lvh.naheulbeuk.model.Story;
+import lvh.naheulbeuk.model.User;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -32,7 +32,7 @@ public class Page {
 	
 	private Fight fight;
 	
-	private List<Test> tests;
+	private List<Test> tests = new ArrayList<Test>();
 	
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private boolean hasEncounterPb;
@@ -95,8 +95,6 @@ public class Page {
 	public void setStoryId(String storyId) {
 		this.storyId = storyId;
 	}
-	
-	
 
 	public String getImageUri() {
 		return imageUri;
@@ -124,6 +122,16 @@ public class Page {
 
 	public List<Test> getTest() {
 		return tests;
+	}
+	
+	public Test getTest(final String testName) {
+		if (testName == null && this.tests != null && this.tests.size() == 1) return this.tests.get(0);
+		for (Test test: this.tests) {
+			if (testName.equals(test.getName())) {
+				return test;
+			}
+		}
+		return null;
 	}
 
 	public void setTest(List<Test> test) {

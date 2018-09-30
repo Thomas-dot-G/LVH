@@ -1,13 +1,13 @@
 package lvh.naheulbeuk;
 
-import lvh.naheulbeuk.model.LVHError;
 import lvh.naheulbeuk.model.Page;
-import lvh.naheulbeuk.model.Response;
 import lvh.naheulbeuk.model.Story;
 import lvh.naheulbeuk.repository.PageRepository;
 import lvh.naheulbeuk.repository.StoryRepository;
 import lvh.naheulbeuk.repository.UserRepository;
 import lvh.naheulbeuk.model.User;
+import lvh.naheulbeuk.model.output.LVHError;
+import lvh.naheulbeuk.model.output.Response;
 
 import java.util.Optional;
 

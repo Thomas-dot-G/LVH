@@ -2,9 +2,9 @@ package lvh.naheulbeuk;
 
 import java.util.List;
 
-import lvh.naheulbeuk.model.LVHError;
-import lvh.naheulbeuk.model.Response;
 import lvh.naheulbeuk.model.Story;
+import lvh.naheulbeuk.model.output.LVHError;
+import lvh.naheulbeuk.model.output.Response;
 import lvh.naheulbeuk.repository.PageRepository;
 import lvh.naheulbeuk.repository.StoryRepository;
 import lvh.naheulbeuk.repository.UserRepository;

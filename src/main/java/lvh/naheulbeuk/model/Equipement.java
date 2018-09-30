@@ -1,5 +1,7 @@
 package lvh.naheulbeuk.model;
 
+import lvh.naheulbeuk.model.list.EquipementType;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -8,7 +10,7 @@ public class Equipement extends Object {
 	
 	private String name;
 
-	private String type;
+	private EquipementType type;
 	
 	private Integer courage;
 	
@@ -36,6 +38,8 @@ public class Equipement extends Object {
 		
 	private Integer projectiles;
 	
+	private Integer rechargeTime;
+	
 	public String getName() {
 		return name;
 	}
@@ -44,11 +48,11 @@ public class Equipement extends Object {
 		this.name = name;
 	}
 
-	public String getType() {
+	public EquipementType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(EquipementType type) {
 		this.type = type;
 	}
 
@@ -156,6 +160,14 @@ public class Equipement extends Object {
 		this.projectiles = projectiles;
 	}
 
+	public Integer getRechargeTime() {
+		return rechargeTime;
+	}
+
+	public void setRechargeTime(Integer rechargeTime) {
+		this.rechargeTime = rechargeTime;
+	}
+
 	public boolean same(Object obj) {
 		if (this == obj) return true;
 		if (obj == null) return false;
@@ -172,6 +184,7 @@ public class Equipement extends Object {
 		if (other.parry != null && !other.parry.equals(parry)) return false;
 		if (other.protection != null && !other.protection.equals(protection)) return false;
 		if (other.strength != null && !other.strength.equals(strength)) return false;
+		if (other.rechargeTime != null && !other.rechargeTime.equals(rechargeTime)) return false;
 		if (other.type != null && !other.type.equals(type)) return false;
 		return true;
 	}

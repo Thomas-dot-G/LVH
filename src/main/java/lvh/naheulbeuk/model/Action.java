@@ -1,5 +1,7 @@
 package lvh.naheulbeuk.model;
 
+import lvh.naheulbeuk.model.list.ActionType;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
