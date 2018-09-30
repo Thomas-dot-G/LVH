@@ -7,6 +7,7 @@ public class Object {
 	
 	private String id;
 	private LocalisationObject localisation;
+	private Boolean questObject;
 	private Integer weight;
 	private Equipement equipement;
 
@@ -43,14 +44,25 @@ public class Object {
 		this.id = id;
 	}
 
+	public Boolean isQuestObject() {
+		return questObject;
+	}
+
+	public void setQuestObject(Boolean questObject) {
+		this.questObject = questObject;
+	}
+
 	public boolean same(Object obj) {
 		if (this == obj) return true;
 		if (obj == null) return false;
-		if (obj.id != null && !obj.id.equals(id)) return false;
-		if (obj.weight != null && !obj.weight.equals(weight)) return false;
-		if (obj.localisation != null && !obj.localisation.equals(localisation)) return false;
+		if (obj.isQuestObject() != null && !obj.isQuestObject() == questObject) return false;
+		if (obj.getId() != null && !obj.getId().equals(id)) return false;
+		if (obj.getWeight() != null && !obj.getWeight().equals(weight)) return false;
+		if (obj.getLocalisation() != null && !obj.getLocalisation().equals(localisation)) return false;
 		if (obj.getEquipement() != null && this.getEquipement() != null) {
 			return this.getEquipement().same(obj.getEquipement());
+		} else if (obj.getEquipement() != null && this.getEquipement() == null){
+			return false;
 		} else {
 			return true;
 		}

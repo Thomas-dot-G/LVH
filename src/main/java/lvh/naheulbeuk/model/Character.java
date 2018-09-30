@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import lvh.naheulbeuk.model.list.Competence;
 import lvh.naheulbeuk.model.list.Job;
 import lvh.naheulbeuk.model.list.Race;
 
@@ -71,6 +72,8 @@ public class Character {
 	private Fight fight;
 	
 	private List<Character> companions;
+	
+	private List<Competence> competences;
 
 	public Character() {
 		this.id = UUID.randomUUID().toString();
@@ -293,10 +296,22 @@ public class Character {
 		this.companions = companions;
 	}
 	
+	public List<Competence> getCompetences() {
+		return competences;
+	}
+
+	public void setCompetences(List<Competence> competences) {
+		this.competences = competences;
+	}
+
 	public boolean hasObject(final lvh.naheulbeuk.model.Object object) {
 			return this.getObjects().stream()
 				.filter(obj -> obj.same(object))
 				.count() > 0;
+	}
+	
+	public boolean hasCompetence(final Competence competence) {
+		return this.competences.contains(competence);
 	}
 
 	

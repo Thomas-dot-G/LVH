@@ -79,7 +79,7 @@ public class AdventureServices {
 				case MODIFY_CARACT: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) + action.getQuantity(); if(quantity < 0) quantity = 0; PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity); break;
 				case ADD_OBJECT: perso.getObjects().add(action.getObject()); break;
 				case REMOVE_OBJECT: removeObject(perso, action.getObject()); break;
-				case END: perso.setCompanions(new ArrayList<Character>()); perso.setPageId(null); break;
+				case END: perso.setCompanions(new ArrayList<Character>()); perso.setPageId(null); lvh.naheulbeuk.model.Object ob = new lvh.naheulbeuk.model.Object(); ob.setQuestObject(true); removeObject(perso, ob); break;
 				default: break;
 			}
 		}
@@ -111,6 +111,7 @@ public class AdventureServices {
 		page.getPageAccesses().forEach(pageAccess -> {
 			boolean isPageAccessible = true;
 			for(Condition condition: pageAccess.getConditions()) {
+				condition.setUnAccessible(false);
 				try {
 					if (ConditionType.CARACT.equals(condition.getConditionType())){
 						if (condition.getCaractCondition().getCaract() != null) {
@@ -127,18 +128,21 @@ public class AdventureServices {
 									default: break;
 								}
 							} else if (givenStringCaract != null) {
-								if (givenStringCaract.equals((String) PropertyUtils.getSimpleProperty(perso, givenStringCaract))){
-									condition.setUnAccessible(condition.getInverseCondition() != null ? condition.getInverseCondition() : false);
-								} else {
-									condition.setUnAccessible(condition.getInverseCondition() != null ? !condition.getInverseCondition() : true);
+								if (!givenStringCaract.equals((String) PropertyUtils.getSimpleProperty(perso, givenStringCaract))){
+									condition.setUnAccessible(true);
 								}
 							}
 						}
 					} else if (ConditionType.OBJECT.equals(condition.getConditionType()) && condition.getObject() != null) {
-						if (perso.hasObject(condition.getObject())){
-							condition.setUnAccessible(condition.getInverseCondition() != null ? condition.getInverseCondition() : false);
+						if (!perso.hasObject(condition.getObject())){
+							condition.setUnAccessible(true);
+						}
+					} else if (ConditionType.COMPETENCE.equals(condition.getConditionType()) && condition.getCompetence() != null) {
+						if (!perso.hasCompetence(condition.getCompetence())){
+							condition.setUnAccessible(true);
 						}
 					}
+					if (condition.getInverseCondition() == true) condition.setUnAccessible(!condition.isUnAccessible());
 					if (condition.isUnAccessible() && condition.getConditionApply() == null) isPageAccessible = false;
 					if (condition.isUnAccessible() && ConditionApply.AND.equals(condition.getConditionApply())) isPageAccessible = false;
 					if (!condition.isUnAccessible() && ConditionApply.OR.equals(condition.getConditionApply())) isPageAccessible = true;

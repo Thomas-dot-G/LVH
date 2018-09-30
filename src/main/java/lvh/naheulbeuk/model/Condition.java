@@ -1,5 +1,6 @@
 package lvh.naheulbeuk.model;
 
+import lvh.naheulbeuk.model.list.Competence;
 import lvh.naheulbeuk.model.list.ConditionApply;
 import lvh.naheulbeuk.model.list.ConditionType;
 
@@ -16,6 +17,8 @@ public class Condition {
 	private ConditionType conditionType;
 	
 	private CaractCondition caractCondition;
+	
+	private Competence competence;
 
 	@JsonProperty(access = Access.READ_ONLY)
 	private boolean unAccessible;
@@ -91,4 +94,14 @@ public class Condition {
 	public void setTestCondition(TestCondition testCondition) {
 		this.testCondition = testCondition;
 	}
+
+	public Competence getCompetence() {
+		return competence;
+	}
+
+	public void setCompetence(Competence competence) {
+		this.competence = competence;
+	}
+	
+	
 }

@@ -4,5 +4,6 @@ public enum ConditionType {
 	TEST,
 	CARACT,
 	FIGHTRESULT,
-	OBJECT
+	OBJECT,
+	COMPETENCE
 }
