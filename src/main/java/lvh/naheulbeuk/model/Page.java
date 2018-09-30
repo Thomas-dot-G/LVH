@@ -141,7 +141,7 @@ public class Page {
 	public PageAccess getPageAccess(final String pageNumber) {
 		if (pageNumber == null) return null;
 		for (PageAccess pageaccess: this.getPageAccesses()) {
-			if (pageNumber.equals(pageaccess.getTargetPageNumer())) return pageaccess;
+			if (pageNumber.equals(pageaccess.getTargetPageNumber())) return pageaccess;
 		}
 		return null;
 	}

@@ -62,7 +62,7 @@ public class AdventureServices {
 	
 	public Character checkActions(final Page currentPage, final Page newPage, final Choice choice, final Character perso) throws Exception {
 		if(currentPage != null) {
-			PageAccess pageAccess = currentPage.getPageAccesses().stream().filter(access -> choice.getTargetPageNumberId().equals(access.getTargetPageNumer())).findFirst().orElse(null);
+			PageAccess pageAccess = currentPage.getPageAccesses().stream().filter(access -> choice.getTargetPageNumberId().equals(access.getTargetPageNumber())).findFirst().orElse(null);
 			executeActions(perso, pageAccess.getActions(), false);
 		}
 		executeActions(perso, newPage.getActions(), false);

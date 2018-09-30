@@ -15,7 +15,7 @@ public class PageAccess {
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private List<Action> actions;
 
-	private String targetPageNumer;
+	private String targetPageNumber;
 	
 	private boolean input;
 	
@@ -57,12 +57,12 @@ public class PageAccess {
 		this.correctInput = correctInput;
 	}
 
-	public String getTargetPageNumer() {
-		return targetPageNumer;
+	public String getTargetPageNumber() {
+		return targetPageNumber;
 	}
 
-	public void setTargetPageNumer(String targetPageNumer) {
-		this.targetPageNumer = targetPageNumer;
+	public void setTargetPageNumber(String targetPageNumber) {
+		this.targetPageNumber = targetPageNumber;
 	}
 
 	public boolean isUnAccessible() {
