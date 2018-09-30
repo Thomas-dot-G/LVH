@@ -18,15 +18,6 @@ import lvh.naheulbeuk.model.list.ConditionType;
 import lvh.naheulbeuk.repository.CharacterRepository;
 import lvh.naheulbeuk.repository.PageRepository;
 import lvh.naheulbeuk.repository.UserRepository;
-
-
-
-
-
-
-
-
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -122,11 +113,12 @@ public class AdventureServices {
 			for(Condition condition: pageAccess.getConditions()) {
 				try {
 					if (ConditionType.CARACT.equals(condition.getConditionType())){
-						if (condition.getCaract() != null) {
-							final int caract = (int) PropertyUtils.getSimpleProperty(perso, condition.getCaract());
-							final Integer givenPoint = condition.getPoints();
+						if (condition.getCaractCondition().getCaract() != null) {
+							final int caract = (int) PropertyUtils.getSimpleProperty(perso, condition.getCaractCondition().getCaract());
+							final Integer givenPoint = condition.getCaractCondition().getPoints();
+							final String givenStringCaract = condition.getCaractCondition().getCaractValue();
 							if (givenPoint != null) {
-								switch (condition.getCaractCondition()) {
+								switch (condition.getCaractCondition().getCaractLogic()) {
 									case LESS_THAN: if (caract >= givenPoint) condition.setUnAccessible(true); break;
 									case LESS_OR_EQUALS_THAN: if (caract > givenPoint) condition.setUnAccessible(true); break;
 									case MORE_THAN: if (caract <= givenPoint) condition.setUnAccessible(true); break;
@@ -134,15 +126,17 @@ public class AdventureServices {
 									case EQUALS: if (caract != givenPoint) condition.setUnAccessible(true); break;
 									default: break;
 								}
+							} else if (givenStringCaract != null) {
+								if (givenStringCaract.equals((String) PropertyUtils.getSimpleProperty(perso, givenStringCaract))){
+									condition.setUnAccessible(condition.getInverseCondition() != null ? condition.getInverseCondition() : false);
+								} else {
+									condition.setUnAccessible(condition.getInverseCondition() != null ? !condition.getInverseCondition() : true);
+								}
 							}
-						} else if (condition.getStringCaract() != null) {
-							if (condition.getStringCaract().equals((String) PropertyUtils.getSimpleProperty(perso, condition.getStringCaract()))){
-								condition.setUnAccessible(condition.getInverseCondition() != null ? condition.getInverseCondition() : false);
-							}
-						} else if (condition.getObject() != null) {
-							if (perso.hasObject(condition.getObject())){
-								condition.setUnAccessible(condition.getInverseCondition() != null ? condition.getInverseCondition() : false);
-							}
+						}
+					} else if (ConditionType.OBJECT.equals(condition.getConditionType()) && condition.getObject() != null) {
+						if (perso.hasObject(condition.getObject())){
+							condition.setUnAccessible(condition.getInverseCondition() != null ? condition.getInverseCondition() : false);
 						}
 					}
 					if (condition.isUnAccessible() && condition.getConditionApply() == null) isPageAccessible = false;

@@ -15,26 +15,14 @@ public class Condition {
 	
 	private ConditionType conditionType;
 	
-	private String caract;
-	
-	private ConditionApply caractCondition; // If conditionType = CARACT
-	
-	private Integer points;
-	
-	private String stringCaract;
-	
-	private String stringCaractValue;
-	
+	private CaractCondition caractCondition;
+
 	@JsonProperty(access = Access.READ_ONLY)
 	private boolean unAccessible;
+			
+	private FightCondition fightCondition;
 	
-	private Boolean testPassed; // true, test passed, false, test failed, null no test required
-	
-	private Boolean combatPassed; // true, combat passed, false, combat failed, null no combat required
-	
-	private Boolean combatAvoided;
-	
-	private String testName;
+	private TestCondition testCondition;
 	
 	private Object object;
 	
@@ -46,22 +34,6 @@ public class Condition {
 
 	public void setConditionType(ConditionType conditionType) {
 		this.conditionType = conditionType;
-	}
-
-	public String getCaract() {
-		return caract;
-	}
-
-	public void setCaract(String caract) {
-		this.caract = caract;
-	}
-
-	public Integer getPoints() {
-		return points;
-	}
-
-	public void setPoints(Integer points) {
-		this.points = points;
 	}
 
 	public Object getObject() {
@@ -88,14 +60,6 @@ public class Condition {
 		this.conditionApply = conditionApply;
 	}
 
-	public ConditionApply getCaractCondition() {
-		return caractCondition;
-	}
-
-	public void setCaractCondition(ConditionApply caractCondition) {
-		this.caractCondition = caractCondition;
-	}
-
 	public boolean isUnAccessible() {
 		return unAccessible;
 	}
@@ -104,52 +68,27 @@ public class Condition {
 		this.unAccessible = isUnAccessible;
 	}
 
-	public Boolean getTestPassed() {
-		return testPassed;
+	public CaractCondition getCaractCondition() {
+		return caractCondition;
 	}
 
-	public void setTestPassed(Boolean testPassed) {
-		this.testPassed = testPassed;
+	public void setCaractCondition(CaractCondition caractCondition) {
+		this.caractCondition = caractCondition;
 	}
 
-	public String getTestName() {
-		return testName;
+	public FightCondition getFightCondition() {
+		return fightCondition;
 	}
 
-	public void setTestName(String testName) {
-		this.testName = testName;
+	public void setFightCondition(FightCondition fightCondition) {
+		this.fightCondition = fightCondition;
 	}
 
-	public String getStringCaract() {
-		return stringCaract;
+	public TestCondition getTestCondition() {
+		return testCondition;
 	}
 
-	public void setStringCaract(String stringCaract) {
-		this.stringCaract = stringCaract;
+	public void setTestCondition(TestCondition testCondition) {
+		this.testCondition = testCondition;
 	}
-
-	public String getStringCaractValue() {
-		return stringCaractValue;
-	}
-
-	public void setStringCaractValue(String stringCaractValue) {
-		this.stringCaractValue = stringCaractValue;
-	}
-
-	public Boolean getCombatPassed() {
-		return combatPassed;
-	}
-
-	public void setCombatPassed(Boolean combatPassed) {
-		this.combatPassed = combatPassed;
-	}
-
-	public Boolean getCombatAvoided() {
-		return combatAvoided;
-	}
-
-	public void setCombatAvoided(Boolean combatAvoided) {
-		this.combatAvoided = combatAvoided;
-	}
-		
 }
