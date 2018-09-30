@@ -1,23 +1,13 @@
 package lvh.naheulbeuk;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
-
-
-
-
-
-
-
 import lvh.naheulbeuk.model.Action;
 import lvh.naheulbeuk.model.Character;
 import lvh.naheulbeuk.model.Condition;
-import lvh.naheulbeuk.model.Equipement;
 import lvh.naheulbeuk.model.Page;
 import lvh.naheulbeuk.model.PageAccess;
 import lvh.naheulbeuk.model.Test;
@@ -25,7 +15,6 @@ import lvh.naheulbeuk.model.User;
 import lvh.naheulbeuk.model.input.Choice;
 import lvh.naheulbeuk.model.list.ConditionApply;
 import lvh.naheulbeuk.model.list.ConditionType;
-import lvh.naheulbeuk.model.list.LocalisationObject;
 import lvh.naheulbeuk.repository.CharacterRepository;
 import lvh.naheulbeuk.repository.PageRepository;
 import lvh.naheulbeuk.repository.UserRepository;
@@ -95,13 +84,11 @@ public class AdventureServices {
 		for(Action action : actions) {
 			int quantity;
 			switch (action.getActionType()) {
-				case addCaract: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) + action.getQuantity(); PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity < 20 ? quantity : 19); break;
-				case removeCaract: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) - action.getQuantity(); PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity > 0 ? quantity : 1); break;
-				case addObject: perso.getObjects().add(action.getObject()); break;
-				case removeObject: removeObject(perso, action.getObject()); break;
-				case removeAllCarriedObject: removeAllObjectsByLocalisation(perso, LocalisationObject.body); break;
-				case removeBag: removeAllObjectsByLocalisation(perso, LocalisationObject.bag); break;
-				case end: perso.setCompanions(new ArrayList<Character>()); perso.setPageId(null); break;
+				case MODIFY_D20_CARACT: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) + action.getQuantity(); if (quantity > 20) quantity = 20; if(quantity < 0) quantity = 0; PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity); break;
+				case MODIFY_CARACT: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) + action.getQuantity(); if(quantity < 0) quantity = 0; PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity); break;
+				case ADD_OBJECT: perso.getObjects().add(action.getObject()); break;
+				case REMOVE_OBJECT: removeObject(perso, action.getObject()); break;
+				case END: perso.setCompanions(new ArrayList<Character>()); perso.setPageId(null); break;
 				default: break;
 			}
 		}
@@ -111,33 +98,18 @@ public class AdventureServices {
 	}
 	
 	private void removeObject(final Character perso, final lvh.naheulbeuk.model.Object object) {
-		if (object instanceof Equipement) {
-			final Equipement equipement = (Equipement) object;
-			List<Equipement> toRemove = perso.getObjects().stream().filter(obj -> obj instanceof Equipement)
-			.map(obj -> (Equipement) obj)
-			.filter(eq -> eq.same(equipement))
-			.collect(Collectors.toList());
-			for (Equipement eq: toRemove) {
-				perso.getObjects().remove(eq);
-			}
-		} else {
 			List<lvh.naheulbeuk.model.Object> toRemove = perso.getObjects().stream()
-					.filter(obj -> obj.getId().equals(object.getId()))
-					.collect(Collectors.toList());
-			for (lvh.naheulbeuk.model.Object eq: toRemove) {
-				perso.getObjects().remove(eq);
+			.filter(obj -> obj.same(object))
+			.collect(Collectors.toList());
+			for (lvh.naheulbeuk.model.Object ob: toRemove) {
+				perso.getObjects().remove(ob);
 			}
-		}
-	}
-	
-	private void removeAllObjectsByLocalisation(final Character perso, final LocalisationObject localisation) {
-			perso.getObjects().removeIf(obj -> localisation.equals(obj.getLocalisation()));
 	}
 	
 	public void setPageAccess(final Character perso, final Page page) {
 		try {
-			if (page.getTest() != null){
-				for (Test test: page.getTest()) {
+			if (page.getTests() != null){
+				for (Test test: page.getTests()) {
 					test.setDoLessThan((int) PropertyUtils.getSimpleProperty(perso, test.getCaract()), (int) PropertyUtils.getSimpleProperty(perso, test.getBasedModificatorCaract()));
 				}
 			}

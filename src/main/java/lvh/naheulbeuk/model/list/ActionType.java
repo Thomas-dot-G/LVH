@@ -1,11 +1,9 @@
 package lvh.naheulbeuk.model.list;
 
 public enum ActionType {
-	addCaract,
-	removeCaract,
-	addObject,
-	removeObject,
-	removeAllCarriedObject,
-	removeBag,
-	end;
+	MODIFY_D20_CARACT,
+	MODIFY_CARACT,
+	ADD_OBJECT,
+	REMOVE_OBJECT,
+	END;
 }

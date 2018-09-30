@@ -120,7 +120,7 @@ public class Page {
 		this.fight = fight;
 	}
 
-	public List<Test> getTest() {
+	public List<Test> getTests() {
 		return tests;
 	}
 	
@@ -134,7 +134,7 @@ public class Page {
 		return null;
 	}
 
-	public void setTest(List<Test> test) {
+	public void setTests(List<Test> test) {
 		this.tests = test;
 	}
 

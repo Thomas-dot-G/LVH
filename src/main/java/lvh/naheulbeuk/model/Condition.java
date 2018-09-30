@@ -26,7 +26,7 @@ public class Condition {
 	private String stringCaractValue;
 	
 	@JsonProperty(access = Access.READ_ONLY)
-	private boolean isUnAccessible;
+	private boolean unAccessible;
 	
 	private Boolean testPassed; // true, test passed, false, test failed, null no test required
 	
@@ -97,11 +97,11 @@ public class Condition {
 	}
 
 	public boolean isUnAccessible() {
-		return isUnAccessible;
+		return unAccessible;
 	}
 
 	public void setUnAccessible(boolean isUnAccessible) {
-		this.isUnAccessible = isUnAccessible;
+		this.unAccessible = isUnAccessible;
 	}
 
 	public Boolean getTestPassed() {

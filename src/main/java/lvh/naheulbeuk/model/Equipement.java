@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class Equipement extends Object {
+public class Equipement {
 	
 	private String name;
 
@@ -168,24 +168,22 @@ public class Equipement extends Object {
 		this.rechargeTime = rechargeTime;
 	}
 
-	public boolean same(Object obj) {
-		if (this == obj) return true;
-		if (obj == null) return false;
-		if (getClass() != obj.getClass()) return false;
-		Equipement other = (Equipement) obj;
-		if (other.additionalDamage != null && !other.additionalDamage.equals(additionalDamage)) return false;
-		if (other.attack != null && !other.attack.equals(attack)) return false;
-		if (other.attackDie != null && !other.attackDie.equals(attackDie)) return false;
-		if (other.charisma != null && !other.charisma.equals(charisma)) return false;
-		if (other.courage != null && !other.courage.equals(courage)) return false;
-		if (other.dexterity != null && !other.dexterity.equals(dexterity)) return false;
-		if (other.intelligence != null && !other.intelligence.equals(intelligence)) return false;
-		if (other.name != null && !other.name.equals(name)) return false;
-		if (other.parry != null && !other.parry.equals(parry)) return false;
-		if (other.protection != null && !other.protection.equals(protection)) return false;
-		if (other.strength != null && !other.strength.equals(strength)) return false;
-		if (other.rechargeTime != null && !other.rechargeTime.equals(rechargeTime)) return false;
-		if (other.type != null && !other.type.equals(type)) return false;
+	public boolean same(Equipement eq) {
+		if (this == eq) return true;
+		if (eq == null) return false;
+		if (eq.additionalDamage != null && !eq.additionalDamage.equals(additionalDamage)) return false;
+		if (eq.attack != null && !eq.attack.equals(attack)) return false;
+		if (eq.attackDie != null && !eq.attackDie.equals(attackDie)) return false;
+		if (eq.charisma != null && !eq.charisma.equals(charisma)) return false;
+		if (eq.courage != null && !eq.courage.equals(courage)) return false;
+		if (eq.dexterity != null && !eq.dexterity.equals(dexterity)) return false;
+		if (eq.intelligence != null && !eq.intelligence.equals(intelligence)) return false;
+		if (eq.name != null && !eq.name.equals(name)) return false;
+		if (eq.parry != null && !eq.parry.equals(parry)) return false;
+		if (eq.protection != null && !eq.protection.equals(protection)) return false;
+		if (eq.strength != null && !eq.strength.equals(strength)) return false;
+		if (eq.rechargeTime != null && !eq.rechargeTime.equals(rechargeTime)) return false;
+		if (eq.type != null && !eq.type.equals(type)) return false;
 		return true;
 	}
 	

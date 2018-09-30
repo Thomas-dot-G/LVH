@@ -66,7 +66,7 @@ public class Character {
 	
 	private String userId;
 	
-	private List<Object> objects;
+	private List<lvh.naheulbeuk.model.Object> objects;
 	
 	private Fight fight;
 	
@@ -294,18 +294,9 @@ public class Character {
 	}
 	
 	public boolean hasObject(final lvh.naheulbeuk.model.Object object) {
-		if (object instanceof Equipement) {
-			final Equipement equipement = (Equipement) object;
-			return this.getObjects().stream().filter(obj -> obj instanceof Equipement)
-			.map(obj -> (Equipement) obj)
-			.filter(eq -> eq.same(equipement))
-			.count() > 0;
-			
-		} else {
 			return this.getObjects().stream()
-					.filter(obj -> obj.getId().equals(object.getId()))
-					.count() > 0;
-		}
+				.filter(obj -> obj.same(object))
+				.count() > 0;
 	}
 
 	

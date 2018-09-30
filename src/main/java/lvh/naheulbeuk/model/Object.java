@@ -2,19 +2,13 @@ package lvh.naheulbeuk.model;
 
 import lvh.naheulbeuk.model.list.LocalisationObject;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-		@JsonSubTypes({ 
-		  @Type(value = Equipement.class),
-		})
 public class Object {
 	
 	private String id;
 	private LocalisationObject localisation;
 	private Integer weight;
+	private Equipement equipement;
 
 
 	public String getId() {
@@ -35,6 +29,31 @@ public class Object {
 
 	public void setWeight(Integer weight) {
 		this.weight = weight;
+	}
+	
+	public Equipement getEquipement() {
+		return equipement;
+	}
+
+	public void setEquipement(Equipement equipement) {
+		this.equipement = equipement;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public boolean same(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (obj.id != null && !obj.id.equals(id)) return false;
+		if (obj.weight != null && !obj.weight.equals(weight)) return false;
+		if (obj.localisation != null && !obj.localisation.equals(localisation)) return false;
+		if (obj.getEquipement() != null && this.getEquipement() != null) {
+			return this.getEquipement().same(obj.getEquipement());
+		} else {
+			return true;
+		}
 	}
 
 }
