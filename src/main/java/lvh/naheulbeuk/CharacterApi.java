@@ -6,6 +6,7 @@ import lvh.naheulbeuk.model.Character;
 import lvh.naheulbeuk.model.output.LVHError;
 import lvh.naheulbeuk.model.output.Response;
 import lvh.naheulbeuk.repository.CharacterRepository;
+import lvh.naheulbeuk.repository.PageRepository;
 import lvh.naheulbeuk.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class CharacterApi {
 	private UserRepository userRepository;
 	
 	@Autowired
+	private PageRepository pageRepository;
+	
+	@Autowired
 	private UserServices userServices;
 	
 	@RequestMapping(value="", method = RequestMethod.PUT)
@@ -41,7 +45,12 @@ public class CharacterApi {
 			} catch (Exception e) {
 				return Response.invalideToken();
 			}
-			return new Response(repository.save(character)).toEntity();
+			Character perso = repository.save(character);
+			final Response response = new Response(perso);
+			if (perso.getPageId() != null) {
+				response.setPage(pageRepository.findById(perso.getPageId()).orElse(null));
+			}
+			return response.toEntity();
 		}
 	}
 	

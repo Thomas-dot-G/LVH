@@ -3,6 +3,7 @@ package lvh.naheulbeuk;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import lvh.naheulbeuk.model.Action;
@@ -18,6 +19,7 @@ import lvh.naheulbeuk.model.list.ConditionType;
 import lvh.naheulbeuk.repository.CharacterRepository;
 import lvh.naheulbeuk.repository.PageRepository;
 import lvh.naheulbeuk.repository.UserRepository;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,18 +75,21 @@ public class AdventureServices {
 	
 	public void executeActions(final Character perso, final List<Action> actions, final boolean savePerso) throws Exception {
 		for(Action action : actions) {
-			int quantity;
-			switch (action.getActionType()) {
-				case MODIFY_D20_CARACT: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) + action.getQuantity(); if (quantity > 20) quantity = 20; if(quantity < 0) quantity = 0; PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity); break;
-				case MODIFY_CARACT: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) + action.getQuantity(); if(quantity < 0) quantity = 0; PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity); break;
-				case ADD_OBJECT: perso.getObjects().add(action.getObject()); break;
-				case REMOVE_OBJECT: removeObject(perso, action.getObject()); break;
-				case END: perso.setCompanions(new ArrayList<Character>()); perso.setPageId(null); lvh.naheulbeuk.model.Object ob = new lvh.naheulbeuk.model.Object(); ob.setQuestObject(true); removeObject(perso, ob); break;
-				default: break;
+			if (action.getConditions() == null || action.getConditions().size() == 0 || isAllConditionsPassed(perso, action.getConditions())) {
+				int quantity;
+				int actionQuantity = action.getQuantity() + action.getD6Quantity() * (int)(Math.random()*6 + 1) +  action.getD20Quantity() * (int)(Math.random()*20 + 1);
+				switch (action.getActionType()) {
+					case MODIFY_D20_CARACT: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) + actionQuantity; if (quantity > 20) quantity = 20; if(quantity < 0) quantity = 0; PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity); break;
+					case MODIFY_CARACT: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) + actionQuantity; if(quantity < 0) quantity = 0; PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity); break;
+					case ADD_OBJECT: perso.getObjects().add(action.getObject()); break;
+					case REMOVE_OBJECT: removeObject(perso, action.getObject()); break;
+					case END: perso.setCompanions(new ArrayList<Character>()); perso.setPageId(null); lvh.naheulbeuk.model.Object ob = new lvh.naheulbeuk.model.Object(); ob.setQuestObject(true); removeObject(perso, ob); break;
+					default: break;
+				}
+				if (savePerso) {
+					characterRepository.save(perso);
+				}
 			}
-		}
-		if (savePerso) {
-			characterRepository.save(perso);
 		}
 	}
 	
@@ -110,49 +115,59 @@ public class AdventureServices {
 		}
 		page.getPageAccesses().forEach(pageAccess -> {
 			boolean isPageAccessible = true;
-			for(Condition condition: pageAccess.getConditions()) {
-				condition.setUnAccessible(false);
-				try {
-					if (ConditionType.CARACT.equals(condition.getConditionType())){
-						if (condition.getCaractCondition().getCaract() != null) {
-							final int caract = (int) PropertyUtils.getSimpleProperty(perso, condition.getCaractCondition().getCaract());
-							final Integer givenPoint = condition.getCaractCondition().getPoints();
-							final String givenStringCaract = condition.getCaractCondition().getCaractValue();
-							if (givenPoint != null) {
-								switch (condition.getCaractCondition().getCaractLogic()) {
-									case LESS_THAN: if (caract >= givenPoint) condition.setUnAccessible(true); break;
-									case LESS_OR_EQUALS_THAN: if (caract > givenPoint) condition.setUnAccessible(true); break;
-									case MORE_THAN: if (caract <= givenPoint) condition.setUnAccessible(true); break;
-									case MORE_OR_EQUALS_THAN: if (caract < givenPoint) condition.setUnAccessible(true); break;
-									case EQUALS: if (caract != givenPoint) condition.setUnAccessible(true); break;
-									default: break;
-								}
-							} else if (givenStringCaract != null) {
-								if (!givenStringCaract.equals((String) PropertyUtils.getSimpleProperty(perso, givenStringCaract))){
-									condition.setUnAccessible(true);
-								}
-							}
-						}
-					} else if (ConditionType.OBJECT.equals(condition.getConditionType()) && condition.getObject() != null) {
-						if (!perso.hasObject(condition.getObject())){
-							condition.setUnAccessible(true);
-						}
-					} else if (ConditionType.COMPETENCE.equals(condition.getConditionType()) && condition.getCompetence() != null) {
-						if (!perso.hasCompetence(condition.getCompetence())){
-							condition.setUnAccessible(true);
-						}
-					}
-					if (condition.getInverseCondition() == true) condition.setUnAccessible(!condition.isUnAccessible());
-					if (condition.isUnAccessible() && condition.getConditionApply() == null) isPageAccessible = false;
-					if (condition.isUnAccessible() && ConditionApply.AND.equals(condition.getConditionApply())) isPageAccessible = false;
-					if (!condition.isUnAccessible() && ConditionApply.OR.equals(condition.getConditionApply())) isPageAccessible = true;
-				} catch (Exception e) {
-					page.setHasEncounterPb(true);
-					pageRepository.save(page);
-				}
-			};
-			pageAccess.setUnAccessible(!isPageAccessible);
+			try {
+				pageAccess.setUnAccessible(!isAllConditionsPassed(perso, pageAccess.getConditions()));
+			} catch (Exception e) {
+				page.setHasEncounterPb(true);
+				pageRepository.save(page);
+			}
 		});
+	}
+	
+	private boolean isAllConditionsPassed(final Character perso, final List<Condition> conditions) throws Exception {
+		boolean isAllConditionsPassed = true;
+		for(Condition condition: conditions) {
+			isConditionTrue(perso, condition);
+			if (condition.isUnAccessible() && condition.getConditionApply() == null) isAllConditionsPassed = false;
+			if (condition.isUnAccessible() && ConditionApply.AND.equals(condition.getConditionApply())) isAllConditionsPassed = false;
+			if (!condition.isUnAccessible() && ConditionApply.OR.equals(condition.getConditionApply())) isAllConditionsPassed = true;
+		};
+		return isAllConditionsPassed;
+	}
+	
+	private boolean isConditionTrue(final Character perso, final Condition condition) throws Exception {
+		condition.setUnAccessible(false);
+		if (ConditionType.CARACT.equals(condition.getConditionType())){
+			if (condition.getCaractCondition().getCaract() != null) {
+				final int caract = (int) PropertyUtils.getSimpleProperty(perso, condition.getCaractCondition().getCaract());
+				final Integer givenPoint = condition.getCaractCondition().getPoints();
+				final String givenStringCaract = condition.getCaractCondition().getCaractValue();
+				if (givenPoint != null) {
+					switch (condition.getCaractCondition().getCaractLogic()) {
+						case LESS_THAN: if (caract >= givenPoint) condition.setUnAccessible(true); break;
+						case LESS_OR_EQUALS_THAN: if (caract > givenPoint) condition.setUnAccessible(true); break;
+						case MORE_THAN: if (caract <= givenPoint) condition.setUnAccessible(true); break;
+						case MORE_OR_EQUALS_THAN: if (caract < givenPoint) condition.setUnAccessible(true); break;
+						case EQUALS: if (caract != givenPoint) condition.setUnAccessible(true); break;
+						default: break;
+					}
+				} else if (givenStringCaract != null) {
+					if (!givenStringCaract.equals((String) PropertyUtils.getSimpleProperty(perso, givenStringCaract))){
+						condition.setUnAccessible(true);
+					}
+				}
+			}
+		} else if (ConditionType.OBJECT.equals(condition.getConditionType()) && condition.getObject() != null) {
+			if (!perso.hasObject(condition.getObject())){
+				condition.setUnAccessible(true);
+			}
+		} else if (ConditionType.COMPETENCE.equals(condition.getConditionType()) && condition.getCompetence() != null) {
+			if (!perso.hasCompetence(condition.getCompetence())){
+				condition.setUnAccessible(true);
+			}
+		}
+		if (condition.getInverseCondition() == true) condition.setUnAccessible(!condition.isUnAccessible());
+		return !condition.isUnAccessible();
 	}
 
 }

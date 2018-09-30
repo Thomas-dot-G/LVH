@@ -1,5 +1,7 @@
 package lvh.naheulbeuk.model;
 
+import java.util.List;
+
 import lvh.naheulbeuk.model.list.ActionType;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,10 +14,15 @@ public class Action {
 	
 	private int quantity;
 	
+	private int d6Quantity;
+	
+	private int d20Quantity;
+	
 	private Object object;
 	
 	private String caract;
 	
+	private List<Condition> conditions;
 
 	public ActionType getActionType() {
 		return actionType;
@@ -47,6 +54,30 @@ public class Action {
 
 	public void setCaract(String caract) {
 		this.caract = caract;
+	}
+
+	public List<Condition> getConditions() {
+		return conditions;
+	}
+
+	public void setConditions(List<Condition> conditions) {
+		this.conditions = conditions;
+	}
+
+	public int getD6Quantity() {
+		return d6Quantity;
+	}
+
+	public void setD6Quantity(int d6Quantity) {
+		this.d6Quantity = d6Quantity;
+	}
+
+	public int getD20Quantity() {
+		return d20Quantity;
+	}
+
+	public void setD20Quantity(int d20Quantity) {
+		this.d20Quantity = d20Quantity;
 	}
 	
 }

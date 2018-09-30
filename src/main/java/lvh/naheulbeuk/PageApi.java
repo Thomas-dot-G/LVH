@@ -9,7 +9,9 @@ import lvh.naheulbeuk.model.User;
 import lvh.naheulbeuk.model.output.LVHError;
 import lvh.naheulbeuk.model.output.Response;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -82,6 +84,15 @@ public class PageApi {
 	@RequestMapping(value="/story/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Response> getFirstPage(@PathVariable String id) {
 		return new Response(repository.findByStoryIdAndEntryPointTrue(id).orElse(null)).toEntity();
+	}
+	
+	@RequestMapping(value="/story/{id}/pageNumber", method = RequestMethod.GET)
+	public ResponseEntity<List<Page>> getPagesName(@PathVariable String id) {
+		return new ResponseEntity<List<Page>>(repository.findByStoryId(id).stream().map(page -> {
+			final Page pageNum = new Page(); 
+			pageNum.setPageNumber(page.getPageNumber()); 
+			return pageNum;
+		}).collect(Collectors.toList()), HttpStatus.OK);
 	}
 	
 	private Story checkStory(final String token, final String id) throws Exception {

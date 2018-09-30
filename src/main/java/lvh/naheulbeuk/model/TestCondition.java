@@ -9,6 +9,10 @@ public class TestCondition {
 	private Boolean testPassed; // true, test passed, false, test failed, null no test required
 			
 	private String testName;
+	
+	private Integer testResultHigherThan;
+	
+	private Integer testResultLowerThan;
 
 	public Boolean getTestPassed() {
 		return testPassed;
@@ -24,6 +28,22 @@ public class TestCondition {
 
 	public void setTestName(String testName) {
 		this.testName = testName;
+	}
+
+	public Integer getTestResultHigherThan() {
+		return testResultHigherThan;
+	}
+
+	public void setTestResultHigherThan(Integer testResultHigherThan) {
+		this.testResultHigherThan = testResultHigherThan;
+	}
+
+	public Integer getTestResultLowerThan() {
+		return testResultLowerThan;
+	}
+
+	public void setTestResultLowerThan(Integer testResultLowerThan) {
+		this.testResultLowerThan = testResultLowerThan;
 	}
 	
 }
