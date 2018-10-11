@@ -3,7 +3,6 @@ package lvh.naheulbeuk;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import lvh.naheulbeuk.model.Action;
@@ -11,6 +10,7 @@ import lvh.naheulbeuk.model.Character;
 import lvh.naheulbeuk.model.Condition;
 import lvh.naheulbeuk.model.Page;
 import lvh.naheulbeuk.model.PageAccess;
+import lvh.naheulbeuk.model.Temporary;
 import lvh.naheulbeuk.model.Test;
 import lvh.naheulbeuk.model.User;
 import lvh.naheulbeuk.model.input.Choice;
@@ -83,7 +83,9 @@ public class AdventureServices {
 					case MODIFY_CARACT: quantity = (int) PropertyUtils.getSimpleProperty(perso, action.getCaract()) + actionQuantity; if(quantity < 0) quantity = 0; PropertyUtils.setSimpleProperty(perso, action.getCaract(), quantity); break;
 					case ADD_OBJECT: perso.getObjects().add(action.getObject()); break;
 					case REMOVE_OBJECT: removeObject(perso, action.getObject()); break;
-					case END: perso.setCompanions(new ArrayList<Character>()); perso.setPageId(null); lvh.naheulbeuk.model.Object ob = new lvh.naheulbeuk.model.Object(); ob.setQuestObject(true); removeObject(perso, ob); break;
+					case ADD_TEMPORARY: perso.getTemporaries().add(action.getTemporary()); break;
+					case REMOVE_TEMPORARY: removeTemporary(perso, action.getTemporary()); break;
+					case END: perso.setCompanions(new ArrayList<Character>()); perso.setPageId(null); lvh.naheulbeuk.model.Object ob = new lvh.naheulbeuk.model.Object(); ob.setQuestObject(true); removeObject(perso, ob); perso.setTemporaries(new ArrayList<Temporary>()); break;
 					default: break;
 				}
 				if (savePerso) {
@@ -102,6 +104,15 @@ public class AdventureServices {
 			}
 	}
 	
+	private void removeTemporary(final Character perso, final Temporary temporary) {
+		List<Temporary> toRemove = perso.getTemporaries().stream()
+		.filter(obj -> obj.same(temporary))
+		.collect(Collectors.toList());
+		for (Temporary temp: toRemove) {
+			perso.getTemporaries().remove(temp);
+		}
+}
+	
 	public void setPageAccess(final Character perso, final Page page) {
 		try {
 			if (page.getTests() != null){
@@ -114,7 +125,6 @@ public class AdventureServices {
 			pageRepository.save(page);
 		}
 		page.getPageAccesses().forEach(pageAccess -> {
-			boolean isPageAccessible = true;
 			try {
 				pageAccess.setUnAccessible(!isAllConditionsPassed(perso, pageAccess.getConditions()));
 			} catch (Exception e) {

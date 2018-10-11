@@ -20,6 +20,8 @@ public class Action {
 	
 	private Object object;
 	
+	private Temporary temporary;
+	
 	private String caract;
 	
 	private List<Condition> conditions;
@@ -78,6 +80,14 @@ public class Action {
 
 	public void setD20Quantity(int d20Quantity) {
 		this.d20Quantity = d20Quantity;
+	}
+
+	public Temporary getTemporary() {
+		return temporary;
+	}
+
+	public void setTemporary(Temporary temporary) {
+		this.temporary = temporary;
 	}
 	
 }
