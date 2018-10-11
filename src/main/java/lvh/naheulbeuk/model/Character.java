@@ -69,6 +69,8 @@ public class Character {
 	
 	private List<lvh.naheulbeuk.model.Object> objects;
 	
+	private List<Temporary> temporary;
+	
 	private Fight fight;
 	
 	private List<Character> companions;
@@ -114,6 +116,14 @@ public class Character {
 
 	public int getLevel() {
 		return level;
+	}
+
+	public List<Temporary> getTemporary() {
+		return temporary;
+	}
+
+	public void setTemporary(List<Temporary> temporary) {
+		this.temporary = temporary;
 	}
 
 	public void setLevel(int level) {

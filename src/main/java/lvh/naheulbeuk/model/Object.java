@@ -1,8 +1,11 @@
 package lvh.naheulbeuk.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import lvh.naheulbeuk.model.list.LocalisationObject;
 
-
+@JsonInclude(Include.NON_NULL)
 public class Object {
 	
 	private String id;
