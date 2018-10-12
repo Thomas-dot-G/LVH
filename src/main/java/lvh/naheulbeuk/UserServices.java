@@ -37,7 +37,7 @@ public class UserServices {
 	}
 	
 	public void checkToken(final String token) throws Exception {
-		if (token != null){
+		if (token == null){
 			throw new Exception("Token is null");
 		}
 		Optional<User> user = userRepository.findByToken(token);
