@@ -1,5 +1,6 @@
 package lvh.naheulbeuk.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -71,6 +72,8 @@ public class Character {
 	
 	private List<Temporary> temporaries;
 	
+	private List<Food> food;
+	
 	private Fight fight;
 	
 	private List<Character> companions;
@@ -124,6 +127,11 @@ public class Character {
 
 	public void setTemporaries(List<Temporary> temporaries) {
 		this.temporaries = temporaries;
+	}
+	
+	public void addTemporary(Temporary temporary) {
+		if (this.temporaries == null) this.temporaries = new ArrayList<Temporary>();
+		this.temporaries.add(temporary);
 	}
 
 	public void setLevel(int level) {
@@ -298,6 +306,14 @@ public class Character {
 		this.fight = fight;
 	}
 
+	public List<Food> getFood() {
+		return food;
+	}
+
+	public void setFood(List<Food> food) {
+		this.food = food;
+	}
+
 	public List<Character> getCompanions() {
 		return companions;
 	}
@@ -322,6 +338,30 @@ public class Character {
 	
 	public boolean hasCompetence(final Competence competence) {
 		return this.competences.contains(competence);
+	}
+	
+	public Character eat(final String foodId) throws Exception {
+		if (foodId == null) throw new Exception("No id for food has been given");
+		final Food food = this.getFood().stream().filter(consume -> foodId.equals(consume.getId())).findFirst().orElse(null);
+		if (food != null) {
+			if (food.getPortions() != null) {
+				this.vitality += 1;
+				if (this.hasCompetence(Competence.Cuistot)) this.vitality += 1;
+				if (this.vitality > this.vitalityMax) this.vitality = this.vitalityMax;
+				if (food.getTemporary()!= null) {
+					this.addTemporary(food.getTemporary());
+				}
+				if (food.getPortions() <= 1) {
+					this.getFood().remove(food);
+				} else {
+					food.setPortions(food.getPortions() -1);
+					
+				}
+			} else {
+				this.getFood().remove(food);
+			}
+		}
+		return this;
 	}
 
 	

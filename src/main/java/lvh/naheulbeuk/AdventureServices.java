@@ -14,6 +14,7 @@ import lvh.naheulbeuk.model.Temporary;
 import lvh.naheulbeuk.model.Test;
 import lvh.naheulbeuk.model.User;
 import lvh.naheulbeuk.model.input.Choice;
+import lvh.naheulbeuk.model.list.Competence;
 import lvh.naheulbeuk.model.list.ConditionApply;
 import lvh.naheulbeuk.model.list.ConditionType;
 import lvh.naheulbeuk.repository.CharacterRepository;
@@ -85,7 +86,7 @@ public class AdventureServices {
 					case REMOVE_OBJECT: removeObject(perso, action.getObject()); break;
 					case ADD_TEMPORARY: perso.getTemporaries().add(action.getTemporary()); break;
 					case REMOVE_TEMPORARY: removeTemporary(perso, action.getTemporary()); break;
-					case END: perso.setCompanions(new ArrayList<Character>()); perso.setPageId(null); lvh.naheulbeuk.model.Object ob = new lvh.naheulbeuk.model.Object(); ob.setQuestObject(true); removeObject(perso, ob); perso.setTemporaries(new ArrayList<Temporary>()); break;
+					case END: endAdventure(perso); break;
 					default: break;
 				}
 				if (savePerso) {
@@ -178,6 +179,18 @@ public class AdventureServices {
 		}
 		if (condition.getInverseCondition() == true) condition.setUnAccessible(!condition.isUnAccessible());
 		return !condition.isUnAccessible();
+	}
+	
+	private void endAdventure(final Character perso) {
+		perso.setCompanions(new ArrayList<Character>());
+		perso.setPageId(null);
+		lvh.naheulbeuk.model.Object ob = new lvh.naheulbeuk.model.Object();
+		ob.setQuestObject(true);
+		removeObject(perso, ob);
+		perso.setTemporaries(new ArrayList<Temporary>());
+		if (perso.hasCompetence(Competence.Mendier_et_pleurnicher)) {
+			perso.setMoney(perso.getMoney() + (int)(Math.random()*20 + 1));
+		}
 	}
 
 }

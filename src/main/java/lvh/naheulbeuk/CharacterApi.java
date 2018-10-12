@@ -3,6 +3,7 @@ package lvh.naheulbeuk;
 import java.util.List;
 
 import lvh.naheulbeuk.model.Character;
+import lvh.naheulbeuk.model.Food;
 import lvh.naheulbeuk.model.output.LVHError;
 import lvh.naheulbeuk.model.output.Response;
 import lvh.naheulbeuk.repository.CharacterRepository;
@@ -69,6 +70,20 @@ public class CharacterApi {
 		return new Response(perso).toEntity();
 	}
 	
+	@RequestMapping(value="/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Response> deletePerso(@RequestHeader(value="Authorization") String token, @PathVariable String id) {
+		Character perso = repository.findById(id).orElse(null);
+		if (perso != null) {
+			try {
+				userServices.checkTokenMatchUserId(token, perso.getUserId());
+				repository.delete(perso);
+			} catch (Exception e) {
+				return Response.invalideToken();
+			}
+		}
+		return new ResponseEntity<Response>(HttpStatus.NO_CONTENT);
+	}
+	
 	@RequestMapping(value="", method = RequestMethod.GET)
 	public ResponseEntity<List<Character>> getMyPerso(@RequestHeader(value="Authorization") String token) {
 		try {
@@ -77,6 +92,30 @@ public class CharacterApi {
 		}
 		catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+	}
+	
+	@RequestMapping(value="/{persoId}/eat", method = RequestMethod.POST)
+	public ResponseEntity<Response> eat(@RequestHeader(value="Authorization") String token, @PathVariable String persoId, @RequestBody Food food) {
+		if (token == null) {
+			return Response.invalideToken();
+		} else {
+			Character perso = repository.findById(persoId).orElse(null);
+			try {
+				userServices.checkTokenMatchUserId(token, perso.getUserId());
+			} catch (Exception e) {
+				return Response.invalideToken();
+			}
+			try {
+				perso.eat(food.getId());
+			} catch (Exception e) {
+				return new Response(new LVHError(HttpStatus.BAD_REQUEST, "No id for food found")).toEntity();
+			}
+			Response response = new Response(repository.save(perso));
+			if (perso.getPageId() != null) {
+				response.setPage(pageRepository.findById(perso.getPageId()).orElse(null));
+			}
+			return response.toEntity();
 		}
 	}
 

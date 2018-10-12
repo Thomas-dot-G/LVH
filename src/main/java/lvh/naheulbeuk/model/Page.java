@@ -34,6 +34,8 @@ public class Page {
 	
 	private List<Test> tests = new ArrayList<Test>();
 	
+	private String storeId;
+	
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private boolean hasEncounterPb;
 	
@@ -118,6 +120,14 @@ public class Page {
 
 	public void setFight(Fight fight) {
 		this.fight = fight;
+	}
+
+	public String getStoreId() {
+		return storeId;
+	}
+
+	public void setStoreId(String storeId) {
+		this.storeId = storeId;
 	}
 
 	public List<Test> getTests() {

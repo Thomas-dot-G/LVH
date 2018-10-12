@@ -302,6 +302,60 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: delete a perso
+      tags:
+        - perso
+      parameters:
+        - name: id
+          in: path
+          description: Id of the searched character
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /perso/{persoId}/eat:
+    post:
+      summary: make a perso eat
+      tags:
+        - perso
+      parameters:
+        - name: persoId
+          in: path
+          description: Id of the searched character
+          required: true
+          schema:
+            type: string
+      requestBody:
+          description: The food id (json)
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Food'
+      responses:
+        '200':
+          description: The updated perso and page
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdventureResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /page:
     put:
       summary: Add a new page to a story
@@ -327,8 +381,6 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
                   $ref: '#/components/schemas/PageResponse'
         default:
           description: unexpected error
@@ -360,8 +412,6 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
                   $ref: '#/components/schemas/PageResponse'
         default:
           description: unexpected error
@@ -408,9 +458,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PageResponse'
+                  $ref: '#/components/schemas/AdventureResponse'
         default:
           description: unexpected error
           content:
@@ -442,9 +490,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PageResponse'
+                  $ref: '#/components/schemas/AdventureResponse'
         default:
           description: unexpected error
           content:
@@ -469,8 +515,6 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
                   $ref: '#/components/schemas/AdventureResponse'
         default:
           description: unexpected error
@@ -478,7 +522,129 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
+  /adventure/test:
+    post:
+      summary: take a test for the perso
+      tags:
+        - adventure
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authentication Token
+          required: true
+          schema:
+            type: string
+      requestBody:
+          description: The result test
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestInput'
+      responses:
+        '200':
+          description: The new state of perso and page
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/AdventureResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  
+  /store:
+    put:
+      summary: create a store
+      tags:
+        - store
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authentication Token
+          required: true
+          schema:
+            type: string
+      requestBody:
+          description: The store to create
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+      responses:
+        '200':
+          description: The new store created
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Store'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /store/{id}:
+    get:
+      summary: get a store
+      tags:
+        - store
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authentication Token
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Id of the searched store
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The store searched
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Store'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /store/all:
+    get:
+      summary: get all stores
+      tags:
+        - store
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authentication Token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All stores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Store'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     User:
@@ -558,7 +724,7 @@ components:
           type: integer
         dexterity:
           type: integer
-        strenght:
+        strength:
           type: integer
         vitality:
           type: integer
@@ -640,6 +806,52 @@ components:
           type: string
         input:
           description: If the access page requires an input, this is the user response
+          type: string
+    Food:
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        dayLength:
+          type: integer
+        portions:
+          type: integer
+        buyingPrice:
+          type: integer
+        sellingPrice:
+          type: integer
+        creationDate:
+          type: string
+        temporary:
+          type: object
+    Store:
+      required:
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        equipements:
+          type: array
+          items:
+            type: object
+        food:
+          type: array
+          items:
+            type: object
+    TestInput:
+      required:
+        - persoId
+      properties:
+        persoId:
+          type: string
+        testName:
+          type: string
+        testResult:
           type: string
     PageResponse:
       properties:
