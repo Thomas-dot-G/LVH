@@ -87,11 +87,9 @@ public class PageApi {
 	}
 	
 	@RequestMapping(value="/story/{id}/pageNumber", method = RequestMethod.GET)
-	public ResponseEntity<List<Page>> getPagesName(@PathVariable String id) {
-		return new ResponseEntity<List<Page>>(repository.findByStoryId(id).stream().map(page -> {
-			final Page pageNum = new Page(); 
-			pageNum.setPageNumber(page.getPageNumber()); 
-			return pageNum;
+	public ResponseEntity<List<String>> getPagesName(@PathVariable String id) {
+		return new ResponseEntity<List<String>>(repository.findByStoryId(id).stream().map(page -> {
+			return page.getPageNumber();
 		}).collect(Collectors.toList()), HttpStatus.OK);
 	}
 	

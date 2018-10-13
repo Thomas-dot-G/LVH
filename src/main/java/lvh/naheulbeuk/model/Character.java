@@ -68,17 +68,17 @@ public class Character {
 	
 	private String userId;
 	
-	private List<lvh.naheulbeuk.model.Object> objects;
+	private List<lvh.naheulbeuk.model.Object> objects = new ArrayList<lvh.naheulbeuk.model.Object>();;
 	
-	private List<Temporary> temporaries;
+	private List<Temporary> temporaries = new ArrayList<Temporary>();
 	
-	private List<Food> food;
+	private List<Food> food = new ArrayList<Food>();
 	
 	private Fight fight;
 	
-	private List<Character> companions;
+	private List<Character> companions = new ArrayList<Character>();;
 	
-	private List<Competence> competences;
+	private List<Competence> competences = new ArrayList<Competence>();
 
 	public Character() {
 		this.id = UUID.randomUUID().toString();

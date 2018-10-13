@@ -20,9 +20,13 @@ public class Action {
 	
 	private Object object;
 	
+	private Food food;
+	
 	private Temporary temporary;
 	
 	private String caract;
+	
+	private Character companion;
 	
 	private List<Condition> conditions;
 
@@ -88,6 +92,22 @@ public class Action {
 
 	public void setTemporary(Temporary temporary) {
 		this.temporary = temporary;
+	}
+
+	public Food getFood() {
+		return food;
+	}
+
+	public void setFood(Food food) {
+		this.food = food;
+	}
+
+	public Character getCompanion() {
+		return companion;
+	}
+
+	public void setCompanion(Character companion) {
+		this.companion = companion;
 	}
 	
 }

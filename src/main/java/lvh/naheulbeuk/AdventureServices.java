@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import lvh.naheulbeuk.model.Action;
 import lvh.naheulbeuk.model.Character;
 import lvh.naheulbeuk.model.Condition;
+import lvh.naheulbeuk.model.Food;
 import lvh.naheulbeuk.model.Page;
 import lvh.naheulbeuk.model.PageAccess;
 import lvh.naheulbeuk.model.Temporary;
@@ -86,6 +87,10 @@ public class AdventureServices {
 					case REMOVE_OBJECT: removeObject(perso, action.getObject()); break;
 					case ADD_TEMPORARY: perso.getTemporaries().add(action.getTemporary()); break;
 					case REMOVE_TEMPORARY: removeTemporary(perso, action.getTemporary()); break;
+					case ADD_FOOD: perso.getFood().add(action.getFood()); break;
+					case REMOVE_FOOD: removeFood(perso, action.getFood()); break;
+					case ADD_COMPANION: perso.getCompanions().add(action.getCompanion()); break;
+					case REMOVE_COMPANION: removeCompanion(perso, action.getCompanion()); break;
 					case END: endAdventure(perso); break;
 					default: break;
 				}
@@ -112,7 +117,25 @@ public class AdventureServices {
 		for (Temporary temp: toRemove) {
 			perso.getTemporaries().remove(temp);
 		}
-}
+	}
+	
+	private void removeFood(final Character perso, final Food food) {
+		List<Food> toRemove = perso.getFood().stream()
+		.filter(obj -> obj.same(food))
+		.collect(Collectors.toList());
+		for (Food foo: toRemove) {
+			perso.getTemporaries().remove(foo);
+		}
+	}
+	
+	private void removeCompanion(final Character perso, final Character comp) {
+		List<Character> toRemove = perso.getCompanions().stream()
+		.filter(obj -> obj.getId().equals(comp.getId()))
+		.collect(Collectors.toList());
+		for (Character compa: toRemove) {
+			perso.getTemporaries().remove(compa);
+		}
+	}
 	
 	public void setPageAccess(final Character perso, final Page page) {
 		try {

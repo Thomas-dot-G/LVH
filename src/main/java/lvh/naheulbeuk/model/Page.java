@@ -144,8 +144,8 @@ public class Page {
 		return null;
 	}
 
-	public void setTests(List<Test> test) {
-		this.tests = test;
+	public void setTests(List<Test> tests) {
+		this.tests = tests;
 	}
 
 	public PageAccess getPageAccess(final String pageNumber) {

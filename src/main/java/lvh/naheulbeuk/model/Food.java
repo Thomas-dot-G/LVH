@@ -94,5 +94,21 @@ public class Food {
 	public void setSellingPrice(Integer sellingPrice) {
 		this.sellingPrice = sellingPrice;
 	}
+	
+	public boolean same(Food food) {
+		if (this == food) return true;
+		if (food == null) return false;
+		if (food.getId() != null && !food.getId().equals(id)) return false;
+		if (food.getName() != null && !food.getName().equals(name)) return false;
+		if (food.getPortions() != null && !food.getPortions().equals(portions)) return false;
+		if (food.getDayLength() != null && !food.getDayLength().equals(dayLength)) return false;
+		if (food.getTemporary() != null && this.temporary != null) {
+			return this.getTemporary().same(food.getTemporary());
+		} else if (food.getTemporary() != null && this.getTemporary() == null){
+			return false;
+		} else {
+			return true;
+		}
+	}
 
 }
