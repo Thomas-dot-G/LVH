@@ -6,33 +6,33 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class FightCondition {
 	
-	private boolean combatPassed; // true, combat passed, false, combat failed, null no combat required
+	private Boolean combatPassed; // true, combat passed, false, combat failed, null no combat required
 	
-	private boolean hasKilled;
+	private Boolean hasKilled;
 	
-	private boolean combatAvoided;
+	private Boolean combatAvoided;
 
-	public boolean isCombatPassed() {
+	public Boolean isCombatPassed() {
 		return combatPassed;
 	}
 
-	public void setCombatPassed(boolean combatPassed) {
+	public void setCombatPassed(Boolean combatPassed) {
 		this.combatPassed = combatPassed;
 	}
 
-	public boolean isHasKilled() {
+	public Boolean isHasKilled() {
 		return hasKilled;
 	}
 
-	public void setHasKilled(boolean hasKilled) {
+	public void setHasKilled(Boolean hasKilled) {
 		this.hasKilled = hasKilled;
 	}
 
-	public boolean isCombatAvoided() {
+	public Boolean isCombatAvoided() {
 		return combatAvoided;
 	}
 
-	public void setCombatAvoided(boolean combatAvoided) {
+	public void setCombatAvoided(Boolean combatAvoided) {
 		this.combatAvoided = combatAvoided;
 	}
 		

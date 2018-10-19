@@ -30,6 +30,8 @@ public class Test {
 	@JsonProperty(access = Access.READ_ONLY)
 	private Integer doLessThan;
 	
+	private Integer maxNumberDice;
+	
 	private List<Action> actions;
 
 	
@@ -111,5 +113,13 @@ public class Test {
 	
 	public Integer getDoLessThan() {
 		return doLessThan;
+	}
+
+	public Integer getMaxNumberDice() {
+		return maxNumberDice;
+	}
+
+	public void setMaxNumberDice(Integer maxNumberDice) {
+		this.maxNumberDice = maxNumberDice;
 	}
 }

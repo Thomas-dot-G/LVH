@@ -57,7 +57,7 @@ public class AdventureServices {
 		if (currentPage == null) {
 			return pageRepository.findByStoryIdAndEntryPointTrue(choice.getTargetStoryId()).orElse(null);
 		}
-		final PageAccess pageAccess= currentPage.getPageAccess(choice.getTargetPageNumberId());
+		final PageAccess pageAccess = currentPage.getPageAccess(choice.getTargetPageNumberId());
 		if (pageAccess == null || (pageAccess.getCorrectInput() != null && !pageAccess.getCorrectInput().equals(choice.getInput()))) {
 			return null;
 		}
@@ -141,7 +141,7 @@ public class AdventureServices {
 		try {
 			if (page.getTests() != null){
 				for (Test test: page.getTests()) {
-					test.setDoLessThan((int) PropertyUtils.getSimpleProperty(perso, test.getCaract()), (int) PropertyUtils.getSimpleProperty(perso, test.getBasedModificatorCaract()));
+					test.setDoLessThan(perso.getFullCaract(test.getCaract()), perso.getFullCaract(test.getBasedModificatorCaract()));
 				}
 			}
 		} catch (Exception e) {

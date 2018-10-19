@@ -9,6 +9,7 @@ import lvh.naheulbeuk.model.list.Competence;
 import lvh.naheulbeuk.model.list.Job;
 import lvh.naheulbeuk.model.list.Race;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.data.annotation.Id;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -362,6 +363,26 @@ public class Character {
 			}
 		}
 		return this;
+	}
+	
+	public int getFullCaract(final String prop) throws Exception {
+		int persoProp = (int) PropertyUtils.getSimpleProperty(this, prop);
+		int equipementProp = 0;
+		int equipementTemp = 0;
+		for (lvh.naheulbeuk.model.Object object : this.getObjects()) {
+			if (object.getEquipement() != null) {
+				Integer eqprop = (Integer) PropertyUtils.getSimpleProperty(object.getEquipement(), prop);
+				if (eqprop != null) equipementProp =+ eqprop;
+			}
+		}
+		for (Temporary temporary : this.getTemporaries()) {
+			if (temporary.getBonus() != null) {
+				Integer tempprop = (Integer) PropertyUtils.getSimpleProperty(temporary.getBonus(), prop);
+				if (tempprop != null) equipementTemp =+ tempprop;
+			}
+		}
+		return persoProp + equipementProp + equipementTemp;
+
 	}
 
 	

@@ -141,7 +141,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-  /all:
+  /story/all:
     get:
       summary: Get all stories
       tags:
@@ -188,7 +188,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-  /{id}:
+  /story/{id}:
     delete:
       summary: Delete a story
       tags:
@@ -760,10 +760,12 @@ components:
           type: array
           items:
             type: object
+    
     CharacterResponse:
       properties:
         perso:
           $ref: "#/components/schemas/Character"
+    
     Page:
       required:
         - storyId
@@ -781,17 +783,107 @@ components:
           description: Is the current page the first page of the story
           type: boolean
         fight:
-          type: object
+          $ref: "#/components/schemas/Fight"
         text:
           type: string
         actions:
           type: array
+          description: Only when writing (not shown in get pages)
           items:
             type: object
+        storeId:
+          type: string
+          description: If the user wants to buy something this is the id to used to get the store (store api)
+        tests:
+          type: array
+          description: Should be used when tests results are needed or if the test has actions linked
+          items:
+            $ref: "#/components/schemas/Test"
         pageAccess:
           type: array
           items:
-            type: object
+            $ref: "#/components/schemas/PageAccess"
+    
+    PageAccess:
+      properties:
+        conditions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Condition"
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Action"
+        targetPageNumber:
+          type: string
+          description: the pageNumber used to changePage (adventureAPI)
+        input:
+          type: boolean
+          description: if true, the targetPageNumber should not be displayed and the user must enter the correct answer
+        correctInput:
+          type: string
+          description: write page only, used for user input comparision
+        unAccessible:
+          type: boolean
+          description: if true the page cannot be accessible by the character (if character changes, pageAccess must be updated from the response)
+    
+    Condition:
+      properties:
+        conditionApply:
+          type: string
+          description: AND,	OR. used for list of conditions to know if all of them should be valid or just one of them.
+        conditionType:
+          type: string
+          description: TEST, CARACT, FIGHTRESULT, OBJECT, COMPETENCE
+        caractCondition:
+          $ref: "#/components/schemas/CaractCondition"
+        competence:
+          type: string
+        fightCondition:
+           $ref: "#/components/schemas/FightCondition"
+        testCondition:
+          $ref: "#/components/schemas/TestCondition"
+        object:
+          $ref: "#/components/schemas/Object"
+        inverseCondition:
+          type: boolean
+          description: if true, the condition should not be true to be valid
+    
+    FightCondition:
+      properties:
+        combatPassed:
+          type: boolean
+          description: true, combat passed, false, combat failed, null no combat required
+        hasKilled:
+          type: boolean
+        combatAvoided:
+          type: boolean
+          
+    TestCondition:
+      properties:
+        testPassed:
+          type: boolean
+          description: true, test passed, false, test failed, null no test required
+        testName:
+          type: string
+        testResultHigherThan:
+          type: integer
+        testResultLowerThan:
+          type: integer
+          
+    CaractCondition:
+      properties:
+        caract:
+          type: string
+        caractLogic:
+          type: string
+          description: LESS_THAN,	LESS_OR_EQUALS_THAN,	MORE_THAN,	MORE_OR_EQUALS_THAN,	EQUALS
+        points:
+          type: integer
+          description: value to compare the character's caract to
+        caractValue:
+          type: string
+
     Choice:
       required:
         - persoId
@@ -807,6 +899,157 @@ components:
         input:
           description: If the access page requires an input, this is the user response
           type: string
+    Fight:
+      properties:
+        roundMax:
+          type: integer
+          description: number of round before the combat should stop
+        pvMin:
+          type: integer
+          description: The pv below which the character should be to considered the fight as done (and lost)
+        enemyPvMin:
+          type: integer
+          description: The pv below which the enemies should be to considered the fight as done (and won)
+        mandatory:
+          type: boolean
+          description: if the fight can be avoided (user choice)
+        contactEnemy:
+          type: array
+          items:
+            $ref: "#/components/schemas/Character"
+        distanceEnemy:
+          type: array
+          description: Become contact enemy if there is no contact enemies
+          items:
+            $ref: "#/components/schemas/Character"
+    Test:
+      properties:
+        name:
+          type: string
+          description: used in condition to know which test to use
+        caract:
+          type: string
+          description: test is based on this character caract if not null
+        plainModificator:
+          type: integer
+          description: if not null, used to apply bonus or malus according to the a character caract
+        basedModificatorCaract:
+          type: string
+          description: caract used to apply bonus or malus to the test
+        caractBasedModificator:
+          type: integer
+          description: of every point away from fromeDefinedPoint, multiply the bonus or malus to this number
+        fromDefinedPoint:
+          type: integer
+          description: number used as ref when comparing character's caract
+        ignoreLowerPoints:
+          type: integer
+          description: when using comparison, can be used to ignore some level of caract
+        doLessThan:
+          type: integer
+          description: read only, is not null the test should be under that to pass
+        maxNumberDice:
+          type: integer
+          description: the max number the dice used for the test should have. if null it is 20
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Action"
+    Action:
+      properties:
+        actionType:
+          type: string
+          description: MODIFY_D20_CARACT, MODIFY_CARACT, ADD_OBJECT, ADD_FOOD, REMOVE_FOOD, ADD_COMPANION, REMOVE_COMPANION, REMOVE_OBJECT, ADD_TEMPORARY, REMOVE_TEMPORARY, END
+        quantity:
+          type: integer
+        d6Quantity:
+          type: integer
+          description: if the quantity should be set according to a dice
+        d20Quantity:
+          type: integer
+          description: if the quantity should be set according to a dice
+        object:
+          items:
+            $ref: "#/components/schemas/Object"
+        food:
+          items:
+            $ref: "#/components/schemas/Food"
+        temporary:
+          items:
+            $ref: "#/components/schemas/Temporary"
+        caract:
+          type: string
+        companion:
+          items:
+            $ref: "#/components/schemas/Character"
+        conditions:
+          type: array
+          items:
+            type: object
+    Temporary:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        bonus:
+          items:
+            $ref: "#/components/schemas/Equipement"
+        creationDate:
+          type: string
+        length:
+          type: integer
+          description: number of seconds the temporary can be used
+    Object:
+      properties:
+        id:
+          type: string
+        localisation:
+          type: string
+          description: BAG,	BODY,	SAFE,	STORE
+        equipement:
+          items:
+            $ref: "#/components/schemas/Equipement"
+        questObject:
+          type: boolean
+        weight:
+          type: integer
+          description: in gramms  
+    Equipement:
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          description: SHIELD, CONTACT_WEAPON, DISTANCE_WEAPON, MAGIC_WEAPON, HEAD_PROTECTION, FOOT_PROTECTION, ARM_PROTECTION, TORAX_PROTECTION, FULL_PROTECTION, JEWLERY, RELIC
+        courage:
+          type: integer
+        intelligence:
+          type: integer
+        charisma:
+          type: integer
+        dexterity:
+          type: integer
+        strength:
+          type: integer
+        attack:
+          type: integer
+        parry:
+          type: integer
+        protection:
+          type: integer
+        sellingPrice:
+          type: integer
+        buyingPrice:
+          type: integer
+        attackDie:
+          type: integer
+        additionalDamage:
+          type: integer
+        projectiles:
+          type: integer
+        rechargeTime:
+          type: integer
     Food:
       required:
         - id
