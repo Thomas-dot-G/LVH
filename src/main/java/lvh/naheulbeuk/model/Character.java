@@ -365,7 +365,7 @@ public class Character {
 		return this;
 	}
 	
-	public int getFullCaract(final String prop) throws Exception {
+	public int getFullCaract(final String prop, Temporary specificTemporary) throws Exception {
 		int persoProp = (int) PropertyUtils.getSimpleProperty(this, prop);
 		int equipementProp = 0;
 		int equipementTemp = 0;
@@ -376,7 +376,10 @@ public class Character {
 			}
 		}
 		for (Temporary temporary : this.getTemporaries()) {
-			if (temporary.getBonus() != null) {
+			if (!temporary.isSpecificUse() && temporary.getBonus() != null) {
+				Integer tempprop = (Integer) PropertyUtils.getSimpleProperty(temporary.getBonus(), prop);
+				if (tempprop != null) equipementTemp =+ tempprop;
+			} else if (temporary.isSpecificUse() && temporary.getBonus() != null && temporary.same(specificTemporary)) {
 				Integer tempprop = (Integer) PropertyUtils.getSimpleProperty(temporary.getBonus(), prop);
 				if (tempprop != null) equipementTemp =+ tempprop;
 			}

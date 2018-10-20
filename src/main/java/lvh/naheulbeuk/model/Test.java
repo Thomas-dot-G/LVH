@@ -33,8 +33,18 @@ public class Test {
 	private Integer maxNumberDice;
 	
 	private List<Action> actions;
+	
+	private Temporary specificBonusToUse;
 
 	
+	public Temporary getSpecificBonusToUse() {
+		return specificBonusToUse;
+	}
+
+	public void setSpecificBonusToUse(Temporary specificBonusToUse) {
+		this.specificBonusToUse = specificBonusToUse;
+	}
+
 	public Integer getPlainModificator() {
 		return plainModificator;
 	}

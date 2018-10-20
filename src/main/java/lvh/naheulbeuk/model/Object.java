@@ -13,6 +13,7 @@ public class Object {
 	private Boolean questObject;
 	private Integer weight;
 	private Equipement equipement;
+	private String imageUri;
 
 
 	public String getId() {
@@ -55,10 +56,23 @@ public class Object {
 		this.questObject = questObject;
 	}
 
+	public String getImageUri() {
+		return imageUri;
+	}
+
+	public void setImageUri(String imageUri) {
+		this.imageUri = imageUri;
+	}
+
+	public Boolean getQuestObject() {
+		return questObject;
+	}
+
 	public boolean same(Object obj) {
 		if (this == obj) return true;
 		if (obj == null) return false;
-		if (obj.isQuestObject() != null && !obj.isQuestObject() == questObject) return false;
+		if (obj.isQuestObject() != null && obj.isQuestObject() != questObject) return false;
+		if (obj.getImageUri() != null && !obj.getImageUri().equals(imageUri)) return false;
 		if (obj.getId() != null && !obj.getId().equals(id)) return false;
 		if (obj.getWeight() != null && !obj.getWeight().equals(weight)) return false;
 		if (obj.getLocalisation() != null && !obj.getLocalisation().equals(localisation)) return false;

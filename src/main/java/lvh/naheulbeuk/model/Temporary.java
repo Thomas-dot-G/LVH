@@ -18,6 +18,8 @@ public class Temporary {
 	
 	private Integer length; // in seconds
 	
+	private boolean specificUse;
+	
 	public Temporary() {
 		this.creationDate = new Date();
 	}
@@ -62,6 +64,14 @@ public class Temporary {
 		this.id = id;
 	}
 	
+	public boolean isSpecificUse() {
+		return specificUse;
+	}
+
+	public void setSpecificUse(boolean specificUse) {
+		this.specificUse = specificUse;
+	}
+
 	public boolean same(Temporary temp) {
 		if (this == temp) return true;
 		if (temp == null) return false;

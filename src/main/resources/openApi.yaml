@@ -887,15 +887,15 @@ components:
     Choice:
       required:
         - persoId
-        - targetPageNumberId
-        - targetStoryId
       properties:
         persoId:
           type: string
         targetPageNumberId:
           type: string
+          description: to change page (if not null, targetStoryId will not be used)
         targetStoryId:
           type: string
+          description: used if the perso has no currentPage
         input:
           description: If the access page requires an input, this is the user response
           type: string
@@ -955,6 +955,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Action"
+        specificBonusToUse:
+    	  items:
+            $ref: "#/components/schemas/Temporary"
     Action:
       properties:
         actionType:
@@ -1000,6 +1003,9 @@ components:
         length:
           type: integer
           description: number of seconds the temporary can be used
+        specificUse:
+          type: boolean
+          description: if true, this temporary will only be used when tests refers to it specifically
     Object:
       properties:
         id:
@@ -1015,6 +1021,8 @@ components:
         weight:
           type: integer
           description: in gramms  
+        imageUri:
+        	type: string
     Equipement:
       properties:
         name:

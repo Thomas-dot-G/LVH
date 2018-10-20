@@ -141,7 +141,7 @@ public class AdventureServices {
 		try {
 			if (page.getTests() != null){
 				for (Test test: page.getTests()) {
-					test.setDoLessThan(perso.getFullCaract(test.getCaract()), perso.getFullCaract(test.getBasedModificatorCaract()));
+					test.setDoLessThan(perso.getFullCaract(test.getCaract(), test.getSpecificBonusToUse()), perso.getFullCaract(test.getBasedModificatorCaract(), test.getSpecificBonusToUse()));
 				}
 			}
 		} catch (Exception e) {
